@@ -1,19 +1,15 @@
 import { get, isArray, sample } from 'lodash';
 import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
-import Platform from './Platform';
-import { INTENT_DELIMITER } from '../../Kiai';
+import { INTENT_DELIMITER, default as Kiai } from '../../Kiai';
 import {
   TConfig,
-  TDialogText,
   TFlows,
   TIntentHandler,
   TKeyValue,
   TLocales,
   TMapping,
-  TTrackingConfig,
   TTrackingDataCollector,
-  TVoiceIndex,
 } from './Types';
 import Tracking from './Tracking';
 
@@ -42,56 +38,18 @@ export default abstract class Conversation {
 
   protected _locale: string = 'en-US';
 
-  protected _platform: Platform;
-  
   protected _suggestions: string[] = [];
-  
+
   protected _lastSpeech: string = '';
 
-  private readonly _flows: TFlows = {};
-
-  private readonly _locales: TLocales = {};
-
-  private readonly _dialog: TDialogText = {};
-
-  private readonly _voice: TVoiceIndex = {};
-
-  private readonly _trackingDataCollector: TTrackingDataCollector;
-
-  private readonly _tracking: TConfig;
+  private readonly app: Kiai;
 
   private _handlers: TIntentHandler[] = [];
 
   private _tracker: Tracking;
 
-  constructor({
-    flows = {},
-    locales = {},
-    platform,
-    dialog = {},
-    voice = {},
-    trackingConfig = {},
-    trackingDataCollector,
-  }: {
-    flows: TFlows;
-    locales: TLocales;
-    platform: Platform;
-    dialog: TDialogText;
-    voice: TVoiceIndex;
-    trackingConfig: TTrackingConfig;
-    trackingDataCollector?: TTrackingDataCollector;
-  }) {
-    this._flows = flows;
-    this._locales = locales;
-    this._platform = platform;
-    this._dialog = dialog;
-    this._voice = voice;
-    this._tracking = trackingConfig;
-    this._trackingDataCollector = trackingDataCollector;
-  }
-
-  get platform(): Platform {
-    return this._platform;
+  constructor({ app }: { app: Kiai }) {
+    this.app = app;
   }
 
   get userId(): string {
@@ -104,7 +62,7 @@ export default abstract class Conversation {
   }
 
   set locale(locale: string) {
-    if (!this._locales[locale]) return;
+    if (!this.locales[locale]) return;
     this._locale = locale;
   }
 
@@ -159,51 +117,71 @@ export default abstract class Conversation {
   protected get previousSpeech(): string {
     return <string>(this.sessionData.__lastSpeech || '');
   }
-  
+
   protected set previousSuggestions(suggestions: string[]) {
     this.sessionData.__lastSuggestions = suggestions;
   }
-  
+
   protected get previousSuggestions(): string[] {
     return <string[]>(this.sessionData.__lastSuggestions || []);
   }
-  
+
   protected get lastUsedDialogVariants(): { [key: string]: string } {
     this.sessionData.__lastVariants = this.sessionData.__lastVariants || {};
     return <{ [key: string]: string }>this.sessionData.__lastVariants;
   }
-  
+
   protected set permissionCallbacks(callbacks: [string, string]) {
     this.sessionData.__permissionCallbacks = callbacks;
   }
-  
+
   protected get permissionCallbacks(): [string, string] {
     return <[string, string]>(this.sessionData.__permissionCallbacks || ['', '']);
   }
   
+  protected get storageUrl(): string {
+    return <string>(this.app.storageConfig.bucketUrl || '');
+  }
+
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
-  
+
   private get confirmationCallbacks(): TMapping {
     return <TMapping>this.sessionData.__confirmation;
   }
-  
+
   private get returnDirectives(): string[] {
     if (!this.sessionData.__callbacks) this.sessionData.__callbacks = <string[]>[];
     return <string[]>this.sessionData.__callbacks;
   }
 
   private get dialog(): TKeyValue {
-    return this._dialog[this._locale];
+    return this.app.dialog[this.locale];
   }
 
   private get voice(): string[] {
-    return this._voice[this.locale] || [];
+    return this.app.voice[this.locale] || [];
+  }
+
+  private get flows(): TFlows {
+    return this.app.flows;
+  }
+
+  private get locales(): TLocales {
+    return this.app.locales;
+  }
+
+  private get trackingConfig(): TConfig {
+    return this.app.trackingConfig;
+  }
+
+  private get trackingDataCollector(): TTrackingDataCollector {
+    return this.app.trackingDataCollector;
   }
 
   abstract show(image: string, alt?: string): void;
-  
+
   abstract redirect({
     url,
     name,
@@ -227,23 +205,23 @@ export default abstract class Conversation {
   protected abstract add(output: any): Conversation;
 
   protected abstract sendResponse(): Conversation;
-  
+
   suggest(...suggestions: string[]): Conversation {
     this._suggestions = this._suggestions.concat(suggestions);
     return this;
   }
-  
+
   translate(path: string, params: string[] = []): string {
-    let msgSrc = get(this._locales[this._locale], path);
+    let msgSrc = get(this.locales[this.locale], path);
 
     if (!msgSrc) {
-      console.warn(`Translation not defined for language "${this._locale}", path "${path}"`);
+      console.warn(`Translation not defined for language "${this.locale}", path "${path}"`);
       return path;
     }
 
     if (isArray(msgSrc)) msgSrc = <string>sample(msgSrc);
 
-    const mf = new MessageFormat(this._locale);
+    const mf = new MessageFormat(this.locale);
     const msg = mf.compile(<string>msgSrc);
 
     return msg({ ...params });
@@ -251,9 +229,9 @@ export default abstract class Conversation {
 
   say(key: string, params?: string[]): Conversation {
     key = String(key);
-    
+
     this._lastSpeech = key;
-    
+
     const regex = new RegExp(`^${key.replace('*', '\\d+')}$`);
     let dialogVariants = Object.keys(this.dialog).filter(key => regex.test(key));
 
@@ -281,13 +259,13 @@ export default abstract class Conversation {
           speech = speech.replace(`{${index}}`, value);
         });
       }
-  
+
       const voices = this.voice.filter(key => new RegExp(`^${dialogVariant}_?[A-Z]`).test(key));
       if (voices.length) {
         return this.speak(sample(voices), speech);
       }
     }
-  
+
     return this.add(speech);
   }
 
@@ -297,13 +275,11 @@ export default abstract class Conversation {
     let [flowName, intentName] = intent.split(INTENT_DELIMITER);
 
     this.currentFlow = flowName;
-    
-    const handler = this._flows[flowName][intentName];
+
+    const handler = this.flows[flowName][intentName];
 
     if (typeof handler !== 'function') {
-      throw new Error(
-        `Target intent not found: "${flowName}${INTENT_DELIMITER}${intentName}"`,
-      );
+      throw new Error(`Target intent not found: "${flowName}${INTENT_DELIMITER}${intentName}"`);
     }
 
     return this.addHandler(handler);
@@ -320,7 +296,7 @@ export default abstract class Conversation {
   }
 
   compare(string1: string, string2: string): boolean {
-    return !string1.localeCompare(string2, this._locale, {
+    return !string1.localeCompare(string2, this.locale, {
       usage: 'search',
       sensitivity: 'base',
       ignorePunctuation: true,
@@ -353,19 +329,20 @@ export default abstract class Conversation {
 
   confirm(options: TMapping): Conversation {
     const confirmationOptions = Object.keys(options);
-    
-    confirmationOptions.forEach(key => options[key] = this.resolveIntent(options[key]));
-    
+
+    confirmationOptions.forEach(key => (options[key] = this.resolveIntent(options[key])));
+
     this.confirmationCallbacks = options;
 
     return this.suggest(...confirmationOptions).expect('confirmation');
   }
 
   track(event: string, data?: TKeyValue): Conversation {
-    this._tracker = this._tracker || new Tracking({ config: this._tracking, userId: this.userId });
+    this._tracker =
+      this._tracker || new Tracking({ config: this.trackingConfig, userId: this.userId });
     let userData;
-    if (typeof this._trackingDataCollector === 'function')
-      userData = this._trackingDataCollector(this);
+    if (typeof this.trackingDataCollector === 'function')
+      userData = this.trackingDataCollector(this);
     this._tracker.trackEvent({ event, data, userData });
 
     return this;
@@ -399,15 +376,15 @@ export default abstract class Conversation {
 
   protected resolveIntent(intent: string): string {
     let [flowName, intentName] = intent.split(INTENT_DELIMITER);
-    
+
     if (!flowName) flowName = this.currentFlow;
-    
+
     if (!intentName) {
-      const flow = this._flows[flowName];
+      const flow = this.flows[flowName];
       if (!flow) throw new Error(`Target flow not found: "${flowName}"`);
       intentName = <string>flow.entryPoint || 'start';
     }
-    
+
     return `${flowName}${INTENT_DELIMITER}${intentName}`;
   }
 }

@@ -8,7 +8,6 @@ import {
   TConfig,
   TDialogText,
   TFlows,
-  TKeyValue,
   TLocales,
   TMapping,
   TTrackingConfig,
@@ -30,19 +29,21 @@ export default class Kiai {
     GOOGLE_CLOUD_FUNCTIONS: GoogleCloudFunctions,
   };
 
-  private readonly _flows: TFlows = {};
+  public readonly flows: TFlows = {};
 
-  private readonly _locales: TLocales = {};
+  public readonly locales: TLocales = {};
 
-  private readonly _localeMapping: TMapping = {};
+  public readonly localeMapping: TMapping = {};
 
-  private readonly _dialog: TDialogText = {};
+  public readonly dialog: TDialogText = {};
 
-  private readonly _voice: TVoiceIndex = {};
+  public readonly voice: TVoiceIndex = {};
 
-  private readonly _trackingConfig: TConfig = {};
+  public readonly trackingConfig: TConfig = {};
 
-  private readonly _trackingDataCollector: TTrackingDataCollector;
+  public readonly trackingDataCollector: TTrackingDataCollector;
+
+  public readonly storageConfig: TConfig = {};
 
   private _platforms: Platform[] = [];
 
@@ -56,6 +57,7 @@ export default class Kiai {
     voice = {},
     trackingConfig = {},
     trackingDataCollector,
+    storageConfig = {},
   }: {
     flows: TFlows;
     locales: TLocales;
@@ -64,14 +66,16 @@ export default class Kiai {
     voice: TVoiceIndex;
     trackingConfig: TTrackingConfig;
     trackingDataCollector?: TTrackingDataCollector;
+    storageConfig: TConfig;
   }) {
-    this._flows = flows;
-    this._locales = locales;
-    this._localeMapping = localeMapping;
-    this._dialog = dialog;
-    this._voice = voice;
-    this._trackingConfig = trackingConfig;
-    this._trackingDataCollector = trackingDataCollector;
+    this.flows = flows;
+    this.locales = locales;
+    this.localeMapping = localeMapping;
+    this.dialog = dialog;
+    this.voice = voice;
+    this.trackingConfig = trackingConfig;
+    this.trackingDataCollector = trackingDataCollector;
+    this.storageConfig = storageConfig;
   }
 
   public get platforms(): Platform[] {
@@ -82,15 +86,9 @@ export default class Kiai {
     return this._framework;
   }
 
-  public addPlatform(Platform: IPlatformConstructor, options: TKeyValue): Platform {
+  public addPlatform(Platform: IPlatformConstructor, options: TConfig): Platform {
     const platform = new Platform({
-      flows: this._flows,
-      locales: this._locales,
-      localeMapping: this._localeMapping,
-      dialog: this._dialog,
-      voice: this._voice,
-      trackingConfig: this._trackingConfig,
-      trackingDataCollector: this._trackingDataCollector,
+      app: this,
       ...options,
     });
     this._platforms.push(platform);

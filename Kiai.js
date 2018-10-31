@@ -6,7 +6,7 @@ const Firebase_1 = require("./lib/frameworks/Firebase");
 const GoogleCloudFunctions_1 = require("./lib/frameworks/GoogleCloudFunctions");
 exports.INTENT_DELIMITER = ':';
 class Kiai {
-    constructor({ flows = {}, locales = {}, localeMapping = {}, dialog = {}, voice = {}, trackingConfig = {}, trackingDataCollector, }) {
+    constructor({ flows = {}, locales = {}, localeMapping = {}, dialog = {}, voice = {}, trackingConfig = {}, trackingDataCollector, storageConfig = {}, }) {
         this.PLATFORMS = {
             DIALOGFLOW: Dialogflow_1.default,
         };
@@ -15,20 +15,22 @@ class Kiai {
             FIREBASE: Firebase_1.default,
             GOOGLE_CLOUD_FUNCTIONS: GoogleCloudFunctions_1.default,
         };
-        this._flows = {};
-        this._locales = {};
-        this._localeMapping = {};
-        this._dialog = {};
-        this._voice = {};
-        this._trackingConfig = {};
+        this.flows = {};
+        this.locales = {};
+        this.localeMapping = {};
+        this.dialog = {};
+        this.voice = {};
+        this.trackingConfig = {};
+        this.storageConfig = {};
         this._platforms = [];
-        this._flows = flows;
-        this._locales = locales;
-        this._localeMapping = localeMapping;
-        this._dialog = dialog;
-        this._voice = voice;
-        this._trackingConfig = trackingConfig;
-        this._trackingDataCollector = trackingDataCollector;
+        this.flows = flows;
+        this.locales = locales;
+        this.localeMapping = localeMapping;
+        this.dialog = dialog;
+        this.voice = voice;
+        this.trackingConfig = trackingConfig;
+        this.trackingDataCollector = trackingDataCollector;
+        this.storageConfig = storageConfig;
     }
     get platforms() {
         return this._platforms;
@@ -37,7 +39,7 @@ class Kiai {
         return this._framework;
     }
     addPlatform(Platform, options) {
-        const platform = new Platform(Object.assign({ flows: this._flows, locales: this._locales, localeMapping: this._localeMapping, dialog: this._dialog, voice: this._voice, trackingConfig: this._trackingConfig, trackingDataCollector: this._trackingDataCollector }, options));
+        const platform = new Platform(Object.assign({ app: this }, options));
         this._platforms.push(platform);
         return platform;
     }

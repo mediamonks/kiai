@@ -13,8 +13,6 @@ import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/Types';
 import { sample, range } from 'lodash';
 
-const storageUrl = require('../../../../config/storage.json').bucketUrl;
-
 export default class DialogflowConversation extends Conversation {
   readonly PERMISSIONS = {
     NAME: 'NAME',
@@ -77,7 +75,7 @@ export default class DialogflowConversation extends Conversation {
     });
 
     this._responses = [];
-    
+
     this.previousSpeech = this._lastSpeech;
     this._lastSpeech = '';
 
@@ -125,8 +123,8 @@ export default class DialogflowConversation extends Conversation {
     if (matches) {
       image = image.replace(wildcard, String(sample(range(+matches[1])) + 1));
     }
-
-    const url = `${storageUrl}images/${image}.png`;
+    
+    const url = `${this.storageUrl}images/${image}.png`;
     return this.add(new Image({ url, alt }));
   }
 
@@ -170,11 +168,11 @@ export default class DialogflowConversation extends Conversation {
   }
 
   play(sound: string, fallback: string = ''): Conversation {
-    return this.add(`<audio src="${storageUrl}audio/${sound}.mp3">${fallback}</audio>`);
+    return this.add(`<audio src="${this.storageUrl}audio/${sound}.mp3">${fallback}</audio>`);
   }
 
   speak(voice: string, text: string): Conversation {
-    return this.add(`<audio src="${storageUrl}voice/${this.locale}/${voice}.wav">${text}</audio>`);
+    return this.add(`<audio src="${this.storageUrl}voice/${this.locale}/${voice}.wav">${text}</audio>`);
   }
 
   /*

@@ -1,16 +1,8 @@
 import { dialogflow } from 'actions-on-google';
 import DialogflowConversation from './DialogflowConversation';
 import Platform from '../../common/Platform';
-import {
-  TDialogText,
-  TFlows,
-  TIntentHandler,
-  TLocales,
-  TMapping,
-  TTrackingConfig,
-  TTrackingDataCollector,
-  TVoiceIndex,
-} from '../../common/Types';
+import { TIntentHandler, TKeyValue } from '../../common/Types';
+import Kiai from '../../../Kiai';
 
 export default class Dialogflow extends Platform {
   private readonly _dialogflow: any;
@@ -18,46 +10,25 @@ export default class Dialogflow extends Platform {
   private readonly _conversation: DialogflowConversation;
 
   public readonly IDENTIFIER: string = 'dialogflow';
-  
+
   public readonly INTENT_DELIMITER: string = '_';
-  
+
   constructor({
-    flows = {},
-    locales = {},
-    localeMapping = {},
-    dialog = {},
-    voice = {},
+    app,
     clientId = '',
     debug = false,
-    trackingConfig = {},
-    trackingDataCollector,
   }: {
-    flows: TFlows;
-    locales: TLocales;
-    localeMapping: TMapping;
-    dialog: TDialogText;
-    voice: TVoiceIndex;
+    app: Kiai;
     clientId: string;
     debug: boolean;
-    trackingConfig: TTrackingConfig;
-    trackingDataCollector?: TTrackingDataCollector;
   }) {
-    super();
+    super({ app });
 
-    this._localeMapping = localeMapping;
     this._dialogflow = dialogflow({ clientId, debug });
 
-    this._conversation = new DialogflowConversation({
-      flows,
-      locales,
-      platform: this,
-      dialog,
-      voice,
-      trackingConfig,
-      trackingDataCollector,
-    });
+    this._conversation = new DialogflowConversation({ app });
 
-    this.registerFlows(flows);
+    this.registerFlows(app.flows);
 
     this.registerConfirmationIntents('yes', 'no');
 
@@ -70,7 +41,7 @@ export default class Dialogflow extends Platform {
 
   private createWrapper(
     handler: TIntentHandler,
-  ): (conversation: any, params?: { [key: string]: any }) => Promise<any> {
+  ): (conversation: any, params?: TKeyValue) => Promise<any> {
     return (conversation, params, ...input): Promise<any> => {
       const intent = conversation.body.queryResult.intent;
 

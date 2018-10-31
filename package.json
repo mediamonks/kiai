@@ -9,7 +9,8 @@
     "dev:ts": "tsc --watch",
     "dev": "npm-run-all dev:ts",
     "build": "npm-run-all build:ts build:dist",
-    "deploy": "npm version patch && git push origin"
+    "deploy": "npm version patch && git push origin",
+    "test": "echo 'Coming soon!'"
   },
   "dependencies": {
     "actions-on-google": "^2.4.1",
@@ -44,6 +45,6 @@
   },
   "license": "MIT",
   "engines": {
-    "node": "8"
+    "node": ">=8"
   }
 }

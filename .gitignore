@@ -3,7 +3,5 @@
 node_modules/
 npm-debug.log
 .tscache
-.sass-cache
-*.css.map
 *.js.map
 /build/

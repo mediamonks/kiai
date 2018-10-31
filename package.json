@@ -7,7 +7,7 @@
     "build:ts": "tsc",
     "build:dist": "rm -rf lib && rm Kiai.js && mv build/* .",
     "dev:ts": "tsc --watch",
-    "dev": "npm-run-all dev:ts",
+    "dev": "npm run dev:ts",
     "build": "npm-run-all build:ts build:dist",
     "deploy": "npm version patch && git push origin",
     "test": "echo 'Coming soon!'"
@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@github.com:mediamonks/kiai.git"
   },
   "author": {
     "name": "Richard Heuser",

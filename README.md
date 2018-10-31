@@ -58,4 +58,4 @@ module.exports = {
 - Run `index.js`
 - In Dialogflow, click the link on the right to test your Action in the Actions on Google simulator.
 
-For a skeleton project including full boilerplate and example code, look here: [Kiai Skeleton]()
+For a skeleton project including full boilerplate and example code, look here: [Kiai Skeleton](https://github.com/mediamonks/kiai-skeleton)

@@ -1,7 +1,7 @@
 import { get, isArray, sample } from 'lodash';
 import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
-import { INTENT_DELIMITER, default as Kiai } from '../../Kiai';
+import Kiai from '../../Kiai';
 import {
   TConfig,
   TFlows,
@@ -20,9 +20,9 @@ export default abstract class Conversation {
     DEVICE_COARSE_LOCATION: string;
   };
 
-  public abstract sessionData: TKeyValue;
+  public abstract readonly sessionData: TKeyValue;
 
-  public abstract userData: TKeyValue;
+  public abstract readonly userData: TKeyValue;
 
   public params: TKeyValue;
 
@@ -32,27 +32,27 @@ export default abstract class Conversation {
 
   public currentIntent: string;
 
-  protected _output: any[] = [];
-
-  protected _endConversation: boolean = false;
-
   protected _locale: string = 'en-US';
 
-  protected _suggestions: string[] = [];
+  protected output: any[] = [];
 
-  protected _lastSpeech: string = '';
+  protected endConversation: boolean = false;
+
+  protected suggestions: string[] = [];
+
+  protected lastSpeech: string = '';
 
   private readonly app: Kiai;
 
-  private _handlers: TIntentHandler[] = [];
+  private handlers: TIntentHandler[] = [];
 
-  private _tracker: Tracking;
+  private tracker: Tracking;
 
-  constructor({ app }: { app: Kiai }) {
+  public constructor({ app }: { app: Kiai }) {
     this.app = app;
   }
 
-  get userId(): string {
+  public get userId(): string {
     let userId = this.userData.id;
     if (!userId) {
       userId = uniqid();
@@ -61,36 +61,36 @@ export default abstract class Conversation {
     return <string>userId;
   }
 
-  set locale(locale: string) {
+  public set locale(locale: string) {
     if (!this.locales[locale]) return;
     this._locale = locale;
   }
 
-  get locale(): string {
+  public get locale(): string {
     return this._locale;
   }
 
-  set repromptCount(count: number) {
+  public set repromptCount(count: number) {
     this.sessionData.__repromptCount = count;
   }
 
-  get repromptCount(): number {
+  public get repromptCount(): number {
     return +(this.sessionData.__repromptCount || 0);
   }
 
-  set currentFlow(flow: string) {
+  public set currentFlow(flow: string) {
     this.sessionData.__flow = flow;
   }
 
-  get currentFlow(): string {
+  public get currentFlow(): string {
     return <string>(this.sessionData.__flow || '');
   }
 
-  set timesInputRepeated(count: number) {
+  public set timesInputRepeated(count: number) {
     this.sessionData.__timesInputRepeated = count;
   }
 
-  get timesInputRepeated(): number {
+  public get timesInputRepeated(): number {
     return <number>(this.sessionData.__timesInputRepeated || 0);
   }
 
@@ -138,7 +138,7 @@ export default abstract class Conversation {
   protected get permissionCallbacks(): [string, string] {
     return <[string, string]>(this.sessionData.__permissionCallbacks || ['', '']);
   }
-  
+
   protected get storageUrl(): string {
     return <string>(this.app.storageConfig.bucketUrl || '');
   }
@@ -180,38 +180,48 @@ export default abstract class Conversation {
     return this.app.trackingDataCollector;
   }
 
-  abstract show(image: string, alt?: string): void;
+  public abstract show(image: string, alt?: string): Conversation;
 
-  abstract redirect({
+  public abstract canTransfer(...capabilities: any[]): boolean;
+
+  public abstract canRedirect(): boolean;
+
+  public abstract redirect({
     url,
     name,
     description,
   }: {
     url: string;
     name: string;
-    description: string;
+    description?: string;
   }): Conversation;
 
-  abstract play(sound: string, fallback?: string): Conversation;
+  public abstract play(sound: string, fallback?: string): Conversation;
 
-  abstract speak(voice: string, text: string): Conversation;
+  public abstract speak(voice: string, text: string): Conversation;
 
   // abstract login(speech?: string): void;
 
   // abstract event(event: string): Conversation;
 
-  abstract respond(): Conversation;
+  public abstract requestPermission(
+    permissions: string[] | string,
+    deniedIntent: string,
+    text?: string,
+  ): Conversation;
+
+  public abstract respond(): Conversation;
 
   protected abstract add(output: any): Conversation;
 
   protected abstract sendResponse(): Conversation;
 
-  suggest(...suggestions: string[]): Conversation {
-    this._suggestions = this._suggestions.concat(suggestions);
+  public suggest(...suggestions: string[]): Conversation {
+    this.suggestions = this.suggestions.concat(suggestions);
     return this;
   }
 
-  translate(path: string, params: string[] = []): string {
+  public translate(path: string, params: string[] = []): string {
     let msgSrc = get(this.locales[this.locale], path);
 
     if (!msgSrc) {
@@ -227,10 +237,10 @@ export default abstract class Conversation {
     return msg({ ...params });
   }
 
-  say(key: string, params?: string[]): Conversation {
+  public say(key: string, params?: string[]): Conversation {
     key = String(key);
 
-    this._lastSpeech = key;
+    this.lastSpeech = key;
 
     const regex = new RegExp(`^${key.replace('*', '\\d+')}$`);
     let dialogVariants = Object.keys(this.dialog).filter(key => regex.test(key));
@@ -269,33 +279,33 @@ export default abstract class Conversation {
     return this.add(speech);
   }
 
-  next(intent: string): Conversation {
+  public next(intent: string): Conversation {
     intent = this.resolveIntent(intent);
 
-    let [flowName, intentName] = intent.split(INTENT_DELIMITER);
+    let [flowName, intentName] = intent.split(Kiai.INTENT_DELIMITER);
 
     this.currentFlow = flowName;
 
     const handler = this.flows[flowName][intentName];
 
     if (typeof handler !== 'function') {
-      throw new Error(`Target intent not found: "${flowName}${INTENT_DELIMITER}${intentName}"`);
+      throw new Error(`Target intent not found: "${flowName}${Kiai.INTENT_DELIMITER}${intentName}"`);
     }
 
     return this.addHandler(handler);
   }
 
-  returnTo(intent: string): Conversation {
+  public returnTo(intent: string): Conversation {
     this.returnDirectives.push(this.resolveIntent(intent));
     return this;
   }
 
-  end(): Conversation {
-    this._endConversation = true;
+  public end(): Conversation {
+    this.endConversation = true;
     return this;
   }
 
-  compare(string1: string, string2: string): boolean {
+  public compare(string1: string, string2: string): boolean {
     return !string1.localeCompare(string2, this.locale, {
       usage: 'search',
       sensitivity: 'base',
@@ -303,23 +313,23 @@ export default abstract class Conversation {
     });
   }
 
-  expect(context: string): Conversation {
+  public expect(context: string): Conversation {
     this.context = context;
     return this;
   }
 
-  repeat(): Conversation {
+  public repeat(): Conversation {
     if (this.previousSpeech) this.say(this.previousSpeech);
     this.suggest(...this.previousSuggestions);
     return this;
   }
 
-  pause(): Conversation {
+  public pause(): Conversation {
     this.add('\n  <break time=".5s"/>');
     return this;
   }
 
-  return(): Conversation {
+  public return(): Conversation {
     const intentDirective = this.returnDirectives.pop();
 
     if (!intentDirective) throw new Error('Conversation.return() called but no return intent set.');
@@ -327,7 +337,7 @@ export default abstract class Conversation {
     return this.next(intentDirective);
   }
 
-  confirm(options: TMapping): Conversation {
+  public confirm(options: TMapping): Conversation {
     const confirmationOptions = Object.keys(options);
 
     confirmationOptions.forEach(key => (options[key] = this.resolveIntent(options[key])));
@@ -337,37 +347,37 @@ export default abstract class Conversation {
     return this.suggest(...confirmationOptions).expect('confirmation');
   }
 
-  track(event: string, data?: TKeyValue): Conversation {
-    this._tracker =
-      this._tracker || new Tracking({ config: this.trackingConfig, userId: this.userId });
+  public track(event: string, data?: TKeyValue): Conversation {
+    this.tracker =
+      this.tracker || new Tracking({ config: this.trackingConfig, userId: this.userId });
     let userData;
     if (typeof this.trackingDataCollector === 'function')
       userData = this.trackingDataCollector(this);
-    this._tracker.trackEvent({ event, data, userData });
+    this.tracker.trackEvent({ event, data, userData });
 
     return this;
   }
 
-  addHandler(handler: TIntentHandler): Conversation {
-    this._handlers.push(handler);
+  public addHandler(handler: TIntentHandler): Conversation {
+    this.handlers.push(handler);
     return this;
   }
 
-  handleConfirmation(option: string): Conversation {
+  public handleConfirmation(option: string): Conversation {
     const intent = this.confirmationCallbacks[option];
     this.confirmationCallbacks = {};
     return this.next(intent);
   }
 
-  handlePermission(granted: boolean): Conversation {
+  public handlePermission(granted: boolean): Conversation {
     return this.next(this.permissionCallbacks[+!granted]);
   }
 
-  handleIntent(): Promise<any> {
+  public handleIntent(): Promise<any> {
     return new Promise(resolve => {
       const executeHandler = (): void => {
-        if (!this._handlers.length) resolve();
-        else Promise.resolve(this._handlers.shift()(this)).then(() => executeHandler());
+        if (!this.handlers.length) resolve();
+        else Promise.resolve(this.handlers.shift()(this)).then(() => executeHandler());
       };
 
       setTimeout(executeHandler, 0);
@@ -375,7 +385,7 @@ export default abstract class Conversation {
   }
 
   protected resolveIntent(intent: string): string {
-    let [flowName, intentName] = intent.split(INTENT_DELIMITER);
+    let [flowName, intentName] = intent.split(Kiai.INTENT_DELIMITER);
 
     if (!flowName) flowName = this.currentFlow;
 
@@ -385,6 +395,6 @@ export default abstract class Conversation {
       intentName = <string>flow.entryPoint || 'start';
     }
 
-    return `${flowName}${INTENT_DELIMITER}${intentName}`;
+    return `${flowName}${Kiai.INTENT_DELIMITER}${intentName}`;
   }
 }

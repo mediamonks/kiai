@@ -4,21 +4,21 @@ import * as Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
 export default class Tracking {
-  private readonly _amplitude: Amplitude;
-  private readonly _ga: any;
-  private readonly _userId: string;
+  private readonly amplitude: Amplitude;
+  private readonly ga: any;
+  private readonly userId: string;
 
-  constructor({ config, userId }: { config: TConfig; userId: string }) {
-    this._userId = userId;
+  public constructor({ config, userId }: { config: TConfig; userId: string }) {
+    this.userId = userId;
 
     const amplitudeApiKey = get(config, 'amplitude.apiKey');
-    if (amplitudeApiKey) this._amplitude = new Amplitude(amplitudeApiKey);
+    if (amplitudeApiKey) this.amplitude = new Amplitude(amplitudeApiKey);
 
     const gaTrackingId = get(config, 'googleAnalytics.trackingId');
-    if (gaTrackingId) this._ga = ua(gaTrackingId, userId, { strictCidFormat: false });
+    if (gaTrackingId) this.ga = ua(gaTrackingId, userId, { strictCidFormat: false });
   }
 
-  trackEvent({
+  public trackEvent({
     event,
     data = {},
     userData = {},
@@ -27,17 +27,17 @@ export default class Tracking {
     data?: TKeyValue;
     userData?: TKeyValue;
   }): void {
-    if (this._amplitude)
-      this._amplitude.track({
+    if (this.amplitude)
+      this.amplitude.track({
         eventType: event,
-        userId: this._userId,
+        userId: this.userId,
         sessionId: Date.now(),
         eventProperties: data,
         userProperties: userData,
       });
 
-    if (this._ga)
-      this._ga.event({
+    if (this.ga)
+      this.ga.event({
         ec: data.category || '',
         ea: event,
         el: data.label || '',

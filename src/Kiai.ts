@@ -16,14 +16,14 @@ import {
 } from './lib/common/Types';
 import Platform from './lib/common/Platform';
 
-export const INTENT_DELIMITER: string = ':';
-
 export default class Kiai {
-  public readonly PLATFORMS = {
+  public static INTENT_DELIMITER: string = ':';
+  
+  public static PLATFORMS = {
     DIALOGFLOW: Dialogflow,
   };
 
-  public readonly FRAMEWORKS = {
+  public static FRAMEWORKS = {
     EXPRESS: Express,
     FIREBASE: Firebase,
     GOOGLE_CLOUD_FUNCTIONS: GoogleCloudFunctions,

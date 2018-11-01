@@ -2,11 +2,11 @@ import { TFlow, TFlows, TIntentHandler, TMapping } from './Types';
 import Kiai from '../../Kiai';
 
 export default abstract class Platform {
-  abstract readonly IDENTIFIER: string;
+  public abstract readonly IDENTIFIER: string;
+  
+  public abstract readonly INTENT_DELIMITER: string;
 
-  abstract readonly INTENT_DELIMITER: string;
-
-  abstract readonly requestHandler: () => any;
+  public abstract readonly requestHandler: () => any;
 
   private readonly app: Kiai;
 

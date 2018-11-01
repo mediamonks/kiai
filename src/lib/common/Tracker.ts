@@ -3,7 +3,7 @@ import { TConfig, TKeyValue } from './Types';
 import * as Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
-export default class Tracking {
+export default class Tracker {
   private readonly amplitude: Amplitude;
   private readonly ga: any;
   private readonly userId: string;
@@ -27,7 +27,7 @@ export default class Tracking {
     data?: TKeyValue;
     userData?: TKeyValue;
   }): void {
-    if (this.amplitude)
+    if (this.amplitude) {
       this.amplitude.track({
         eventType: event,
         userId: this.userId,
@@ -35,13 +35,15 @@ export default class Tracking {
         eventProperties: data,
         userProperties: userData,
       });
+    }
 
-    if (this.ga)
+    if (this.ga) {
       this.ga.event({
-        ec: data.category || '',
+        ec: data.category || '[unspecified]',
         ea: event,
         el: data.label || '',
         ev: data.value,
       });
+    }
   }
 }

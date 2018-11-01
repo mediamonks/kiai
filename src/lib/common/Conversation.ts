@@ -11,7 +11,7 @@ import {
   TMapping,
   TTrackingDataCollector,
 } from './Types';
-import Tracking from './Tracking';
+import Tracker from './Tracker';
 
 export default abstract class Conversation {
   public abstract readonly PERMISSIONS: {
@@ -46,7 +46,7 @@ export default abstract class Conversation {
 
   private handlers: TIntentHandler[] = [];
 
-  private tracker: Tracking;
+  private tracker: Tracker;
 
   public constructor({ app }: { app: Kiai }) {
     this.app = app;
@@ -349,7 +349,7 @@ export default abstract class Conversation {
 
   public track(event: string, data?: TKeyValue): Conversation {
     this.tracker =
-      this.tracker || new Tracking({ config: this.trackingConfig, userId: this.userId });
+      this.tracker || new Tracker({ config: this.trackingConfig, userId: this.userId });
     let userData;
     if (typeof this.trackingDataCollector === 'function')
       userData = this.trackingDataCollector(this);

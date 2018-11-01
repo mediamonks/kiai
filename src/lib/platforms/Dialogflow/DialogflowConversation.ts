@@ -193,6 +193,7 @@ export default class DialogflowConversation extends Conversation {
 
     const images = this.responses.filter(response => response instanceof Image);
     if (images.length > 1) {
+      console.warn('Only 1 image per response allowed. Only the last image will be shown.');
       const image = images.pop();
       this.responses = this.responses.filter(
         response => !(response instanceof Image) || response === image,

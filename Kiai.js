@@ -4,17 +4,8 @@ const Dialogflow_1 = require("./lib/platforms/Dialogflow/Dialogflow");
 const Express_1 = require("./lib/frameworks/Express");
 const Firebase_1 = require("./lib/frameworks/Firebase");
 const GoogleCloudFunctions_1 = require("./lib/frameworks/GoogleCloudFunctions");
-exports.INTENT_DELIMITER = ':';
 class Kiai {
     constructor({ flows = {}, locales = {}, localeMapping = {}, dialog = {}, voice = {}, trackingConfig = {}, trackingDataCollector, storageConfig = {}, }) {
-        this.PLATFORMS = {
-            DIALOGFLOW: Dialogflow_1.default,
-        };
-        this.FRAMEWORKS = {
-            EXPRESS: Express_1.default,
-            FIREBASE: Firebase_1.default,
-            GOOGLE_CLOUD_FUNCTIONS: GoogleCloudFunctions_1.default,
-        };
         this.flows = {};
         this.locales = {};
         this.localeMapping = {};
@@ -48,5 +39,14 @@ class Kiai {
         return this._framework;
     }
 }
+Kiai.INTENT_DELIMITER = ':';
+Kiai.PLATFORMS = {
+    DIALOGFLOW: Dialogflow_1.default,
+};
+Kiai.FRAMEWORKS = {
+    EXPRESS: Express_1.default,
+    FIREBASE: Firebase_1.default,
+    GOOGLE_CLOUD_FUNCTIONS: GoogleCloudFunctions_1.default,
+};
 exports.default = Kiai;
 //# sourceMappingURL=Kiai.js.map

@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { TConfig, TKeyValue } from './Types';
+import { TKeyValue, TTrackingConfig } from './Types';
 import * as Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
@@ -8,7 +8,7 @@ export default class Tracker {
   private readonly ga: any;
   private readonly userId: string;
 
-  public constructor({ config, userId }: { config: TConfig; userId: string }) {
+  public constructor({ config, userId }: { config: TTrackingConfig; userId: string }) {
     this.userId = userId;
 
     const amplitudeApiKey = get(config, 'amplitude.apiKey');

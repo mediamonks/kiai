@@ -4,7 +4,6 @@ import * as uniqid from 'uniqid';
 import App from './App';
 import {
   TAppConfig,
-  TConfig,
   TFlows,
   TIntentHandler,
   TKeyValue,
@@ -174,7 +173,7 @@ export default abstract class Conversation {
   }
 
   private get trackingDataCollector(): TTrackingDataCollector {
-    return this.config.trackingDataCollector;
+    return this.config.tracking.dataCollector;
   }
 
   public abstract show(image: string, alt?: string): Conversation;

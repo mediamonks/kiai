@@ -47,7 +47,7 @@ See `./docs/dialog.md`
 
 - Add [Firebase](https://console.firebase.google.com) to your Google project.
 - If this is your first time using firebase CLI, run `$ firebase login` first.
-- Get your Google project ID (in the URL) and run `$ firebase use PROJECT_ID_HERE`.
-- Run `$ yarn deploy` to deploy.
+- Get your Google project ID (from e.g. the URL) and put it in `.firebaserc`.
+- Run `$ yarn build && yarn deploy` to deploy.
 - In the Firebase console, go to `Functions` and copy the URL of your endpoint.
 - In Dialogflow, go to `Fullfilment` and paste the URL under `Webhook`.

@@ -173,10 +173,6 @@ export default abstract class Conversation {
     return this.config.locales;
   }
 
-  private get trackingConfig(): TConfig {
-    return this.config.tracking;
-  }
-
   private get trackingDataCollector(): TTrackingDataCollector {
     return this.config.trackingDataCollector;
   }
@@ -350,7 +346,7 @@ export default abstract class Conversation {
 
   public track(event: string, data?: TKeyValue): Conversation {
     this.tracker =
-      this.tracker || new Tracker({ config: this.trackingConfig, userId: this.userId });
+      this.tracker || new Tracker({ config: this.config.tracking, userId: this.userId });
     let userData;
     if (typeof this.trackingDataCollector === 'function')
       userData = this.trackingDataCollector(this);

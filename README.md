@@ -1,4 +1,4 @@
-### Kiai VoiceAction Framework
+## Kiai VoiceAction Framework
 
 A framework for quickly and easily setting up and deploying Actions on Google projects.
 
@@ -19,7 +19,9 @@ Planned features:
 - Integrated DB support
 - Integrated notifications
 
-#### Getting started
+### Getting started
+
+*For a skeleton project including full boilerplate and example code, look here: [Kiai Skeleton](https://github.com/mediamonks/kiai-skeleton)*
 
 ```bash
 $ npm add kiai
@@ -58,7 +60,5 @@ module.exports = {
 - Run `index.js`
 - In Dialogflow, click the link on the right to test your Action in the Actions on Google simulator.
 
-For a skeleton project including full boilerplate and example code, look here: [Kiai Skeleton](https://github.com/mediamonks/kiai-skeleton)
-
-Documentation:
+### Documentation:
 [Getting Started](https://github.com/mediamonks/kiai-skeleton/blob/master/docs/getting-started.md)

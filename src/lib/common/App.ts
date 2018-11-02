@@ -44,7 +44,6 @@ export default class App {
     dialog = {},
     voice = {},
     tracking = {},
-    trackingDataCollector,
     storage = {},
   }: TAppConfig) {
     this.config = {
@@ -54,7 +53,6 @@ export default class App {
       dialog,
       voice,
       tracking,
-      trackingDataCollector,
       storage,
     };
   }

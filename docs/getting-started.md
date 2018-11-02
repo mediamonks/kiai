@@ -4,7 +4,7 @@
 - Run `$ yarn`.
 - Update the `name`, `version`, `description`, `repository` and `author` fields in `package.json`.
 - Create a [Google Cloud](https://console.cloud.google.com) project.
-- Create a [Dialogflow](https://console.dialogflow.com) agent and select the Google Project you just created.
+- Create a [Dialogflow](https://console.dialogflow.com) agent and select the Google project you just created.
 
 #### Defining flows
 See `./docs/flows.md`
@@ -27,7 +27,7 @@ See `./docs/dialog.md`
 - Copy the public dialogflow endpoint which is printed to the console.
 - Go to your Dialogflow agent and create an export via `Properties > Export and Import`.
 - Create a new, private, Dialogflow agent and import the exported zip files.
-- In this cloned agent, go to `Fulfillment` and paste the copied endpoint URL. 
+- In this cloned agent, go to `Fulfillment` and paste the copied endpoint URL.
 
 #### Database
 

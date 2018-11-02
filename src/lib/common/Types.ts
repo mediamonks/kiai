@@ -37,6 +37,16 @@ export type TTrackingConfig = {
   googleAnalytics?: {
     trackingId: string;
   };
+  dataCollector?: TTrackingDataCollector
+};
+
+export type TStorageConfig = {
+  rootUrl?: string;
+  paths?: {
+    images?: string;
+    sfx?: string;
+    voice?: string;
+  };
 };
 
 export type TAppConfig = {
@@ -46,15 +56,7 @@ export type TAppConfig = {
   dialog: TDialogText;
   voice: TVoiceIndex;
   tracking: TTrackingConfig;
-  trackingDataCollector?: TTrackingDataCollector;
-  storage: {
-    rootUrl?: string;
-    paths?: {
-      images?: string;
-      sfx?: string;
-      voice?: string;
-    };
-  }
+  storage: TStorageConfig;
 }
 
 export interface IPlatformConstructor {

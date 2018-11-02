@@ -67,7 +67,7 @@ export default class App {
 
   public addPlatform(Platform: IPlatformConstructor, options: TConfig): Platform {
     const platform = new Platform({
-      app: this,
+      config: this.config,
       ...options,
     });
     this._platforms.push(platform);

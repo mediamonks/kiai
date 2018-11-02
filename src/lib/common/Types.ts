@@ -1,6 +1,5 @@
 import Conversation from './Conversation';
 import Platform from './Platform';
-import App from './App';
 
 export type TKeyValue = {
   [key: string]: string | string[] | number | number[] | TKeyValue | TKeyValue[];
@@ -60,5 +59,5 @@ export type TAppConfig = {
 }
 
 export interface IPlatformConstructor {
-  new (options: { app: App }): Platform;
+  new (options: { config: TAppConfig }): Platform;
 }

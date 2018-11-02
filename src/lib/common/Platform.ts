@@ -1,5 +1,4 @@
-import { TFlow, TFlows, TIntentHandler, TMapping } from './Types';
-import Kiai from '../../Kiai';
+import { TAppConfig, TFlow, TFlows, TIntentHandler, TMapping } from './Types';
 
 export default abstract class Platform {
   public abstract readonly IDENTIFIER: string;
@@ -8,14 +7,14 @@ export default abstract class Platform {
 
   public abstract readonly requestHandler: () => any;
 
-  private readonly app: Kiai;
+  private readonly config: TAppConfig;
 
-  protected constructor({ app }: { app: Kiai }) {
-    this.app = app;
+  protected constructor({ config }: { config: TAppConfig }) {
+    this.config = config;
   }
 
   private get localeMapping(): TMapping {
-    return this.app.localeMapping;
+    return this.config.localeMapping;
   }
 
   protected abstract registerIntent(key: string, handler: TIntentHandler): void;

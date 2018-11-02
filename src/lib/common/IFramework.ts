@@ -1,4 +1,4 @@
-import Kiai from '../../Kiai';
+import App from './App';
 import { TRequestHandler } from './Types';
 
 export default interface IFramework {
@@ -6,7 +6,7 @@ export default interface IFramework {
 }
 
 export interface IFrameworkConstructor {
-  new (app: Kiai): IFramework;
+  new (app: App): IFramework;
 }
 
 declare var IFramework: IFrameworkConstructor;

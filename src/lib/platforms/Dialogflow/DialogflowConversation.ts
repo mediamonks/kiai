@@ -8,10 +8,11 @@ import {
   GoogleActionsV2PermissionValueSpecPermissions,
   NewSurface,
   SurfaceCapability,
+  BasicCard,
 } from 'actions-on-google';
+import { sample, range } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/Types';
-import { sample, range } from 'lodash';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {
@@ -69,7 +70,8 @@ export default class DialogflowConversation extends Conversation {
 
     const url = `${this.storageUrl}images/${image}.png`;
 
-    return this.add(new Image({ url, alt }));
+    // return this.add(new Image({ url, alt }));
+    return this.add(new BasicCard({ image: new Image({ url, alt }), display: 'WHITE' }));
   }
 
   public canTransfer(...capabilities: SurfaceCapability[]): boolean {
@@ -123,12 +125,18 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public play(sound: string, fallback: string = ''): Conversation {
-    return this.add(`<audio src="${this.storageUrl}audio/${sound}.mp3">${fallback}</audio>`);
+    return this.add(
+      `<audio src="${this.config.storage.rootUrl}${
+        this.config.storage.paths.sfx
+      }${sound}.mp3">${fallback}</audio>`,
+    );
   }
 
   public speak(voice: string, text: string): Conversation {
     return this.add(
-      `<audio src="${this.storageUrl}voice/${this.locale}/${voice}.wav">${text}</audio>`,
+      `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.sfx}${
+        this.locale
+      }/${voice}.wav">${text}</audio>`,
     );
   }
 

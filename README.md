@@ -1,4 +1,5 @@
 ### Kiai VoiceAction Framework
+
 A framework for quickly and easily setting up and deploying Actions on Google projects.
 
 Features include:
@@ -33,13 +34,11 @@ const flows = {
   main: require('./flows/main'),
 };
 
-const app = new Kiai({
-  flows,
-});
+const app = new Kiai({ flows });
 
-app.addPlatform(app.PLATFORMS.DIALOGFLOW);
+app.addPlatform(Kiai.PLATFORMS.DIALOGFLOW);
 
-app.setFramework(app.FRAMEWORKS.EXPRESS);
+app.setFramework(Kiai.FRAMEWORKS.EXPRESS);
 ```
 
 - Add [ngrok](https://www.npmjs.com/package/ngrok) to your project.
@@ -55,7 +54,11 @@ module.exports = {
   },
 };
 ```
+
 - Run `index.js`
 - In Dialogflow, click the link on the right to test your Action in the Actions on Google simulator.
 
 For a skeleton project including full boilerplate and example code, look here: [Kiai Skeleton](https://github.com/mediamonks/kiai-skeleton)
+
+Documentation:
+[Getting Started](https://github.com/mediamonks/kiai-skeleton/blob/master/docs/getting-started.md)

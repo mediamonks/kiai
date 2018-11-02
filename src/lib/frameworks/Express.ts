@@ -1,35 +1,39 @@
 import IFramework from '../common/IFramework';
-import Kiai from '../../Kiai';
+import App from '../common/App';
 import { TRequestHandler } from '../common/Types';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 
+const PORT = process.env.PORT || 3000;
+const URL = `http://localhost:${PORT}`;
+
 export default class Express implements IFramework {
   private express: express.Express;
+  
+  public endpoints = [];
 
-  public constructor(app: Kiai) {
+  public constructor(app: App) {
     this.express = express();
 
     this.express.use(bodyParser.json());
 
-    const port = process.env.PORT || 3000;
-
     app.platforms.forEach(platform => {
       const endpoint = `/${platform.IDENTIFIER}`;
-
       this.express.post(endpoint, platform.requestHandler);
-
-      console.log(`Endpoint mounted at ${endpoint}`);
+      this.endpoints.push(endpoint);
     });
 
-    this.express.listen(port, () => {
-      console.log(`Server listening on http://localhost:${port}`);
+    this.express.listen(PORT, () => {
+      console.log('Server started.\nLocal endpoints:');
+      this.endpoints.forEach(endpoint => {
+        console.log(`${URL}${endpoint}`);
+      })
     });
   }
 
   public use(name: string, handler: TRequestHandler): void {
     const endpoint = `/${name}`;
     this.express.all(endpoint, handler);
-    console.log(`Endpoint mounted at ${endpoint}`);
+    this.endpoints.push(endpoint);
   }
 }

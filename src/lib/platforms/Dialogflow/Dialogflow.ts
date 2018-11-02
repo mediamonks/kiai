@@ -1,8 +1,7 @@
 import { dialogflow } from 'actions-on-google';
 import DialogflowConversation from './DialogflowConversation';
 import Platform from '../../common/Platform';
-import { TIntentHandler, TKeyValue } from '../../common/Types';
-import Kiai from '../../../Kiai';
+import { TAppConfig, TIntentHandler, TKeyValue } from '../../common/Types';
 
 export default class Dialogflow extends Platform {
   private readonly dialogflow: any;
@@ -14,21 +13,21 @@ export default class Dialogflow extends Platform {
   public readonly INTENT_DELIMITER: string = '_';
   
   public constructor({
-    app,
+    config,
     clientId = '',
     debug = false,
   }: {
-    app: Kiai;
+    config: TAppConfig;
     clientId: string;
     debug: boolean;
   }) {
-    super({ app });
+    super({ config });
 
     this.dialogflow = dialogflow({ clientId, debug });
 
-    this.conversation = new DialogflowConversation({ app });
+    this.conversation = new DialogflowConversation({ config });
 
-    this.registerFlows(app.flows);
+    this.registerFlows(config.flows);
 
     this.registerConfirmationIntents('yes', 'no');
 

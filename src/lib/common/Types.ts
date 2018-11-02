@@ -1,6 +1,6 @@
 import Conversation from './Conversation';
 import Platform from './Platform';
-import Kiai from '../../Kiai';
+import App from './App';
 
 export type TKeyValue = {
   [key: string]: string | string[] | number | number[] | TKeyValue | TKeyValue[];
@@ -39,6 +39,24 @@ export type TTrackingConfig = {
   };
 };
 
+export type TAppConfig = {
+  flows: TFlows;
+  locales: TLocales;
+  localeMapping: TMapping;
+  dialog: TDialogText;
+  voice: TVoiceIndex;
+  tracking: TTrackingConfig;
+  trackingDataCollector?: TTrackingDataCollector;
+  storage: {
+    rootUrl?: string;
+    paths?: {
+      images?: string;
+      sfx?: string;
+      voice?: string;
+    };
+  }
+}
+
 export interface IPlatformConstructor {
-  new (options: { app: Kiai }): Platform;
+  new (options: { app: App }): Platform;
 }

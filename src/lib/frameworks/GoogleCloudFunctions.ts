@@ -1,9 +1,9 @@
 import IFramework from '../common/IFramework';
-import Kiai from '../../Kiai';
+import App from '../common/App';
 import { TRequestHandler } from '../common/Types';
 
 export default class GoogleCloudFunctions implements IFramework {
-  public constructor(app: Kiai) {
+  public constructor(app: App) {
     app.platforms.forEach(platform => {
       this[platform.IDENTIFIER] = platform.requestHandler;
     });

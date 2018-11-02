@@ -1,8 +1,9 @@
 import { get, isArray, sample } from 'lodash';
 import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
-import Kiai from '../../Kiai';
+import App from './App';
 import {
+  TAppConfig,
   TConfig,
   TFlows,
   TIntentHandler,
@@ -31,7 +32,9 @@ export default abstract class Conversation {
   public location: any;
 
   public currentIntent: string;
-
+  
+  protected readonly config: TAppConfig;
+  
   protected _locale: string = 'en-US';
 
   protected output: any[] = [];
@@ -42,14 +45,12 @@ export default abstract class Conversation {
 
   protected lastSpeech: string = '';
 
-  private readonly app: Kiai;
-
-  private handlers: TIntentHandler[] = [];
+  private intentHandlers: TIntentHandler[] = [];
 
   private tracker: Tracker;
 
-  public constructor({ app }: { app: Kiai }) {
-    this.app = app;
+  public constructor({ config }: { config: TAppConfig }) {
+    this.config = config;
   }
 
   public get userId(): string {
@@ -140,9 +141,9 @@ export default abstract class Conversation {
   }
 
   protected get storageUrl(): string {
-    return <string>(this.app.storageConfig.bucketUrl || '');
+    return <string>(this.config.storage.rootUrl || '');
   }
-
+  
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -157,27 +158,27 @@ export default abstract class Conversation {
   }
 
   private get dialog(): TKeyValue {
-    return this.app.dialog[this.locale];
+    return this.config.dialog[this.locale];
   }
 
   private get voice(): string[] {
-    return this.app.voice[this.locale] || [];
+    return this.config.voice[this.locale] || [];
   }
 
   private get flows(): TFlows {
-    return this.app.flows;
+    return this.config.flows;
   }
 
   private get locales(): TLocales {
-    return this.app.locales;
+    return this.config.locales;
   }
 
   private get trackingConfig(): TConfig {
-    return this.app.trackingConfig;
+    return this.config.tracking;
   }
 
   private get trackingDataCollector(): TTrackingDataCollector {
-    return this.app.trackingDataCollector;
+    return this.config.trackingDataCollector;
   }
 
   public abstract show(image: string, alt?: string): Conversation;
@@ -282,14 +283,14 @@ export default abstract class Conversation {
   public next(intent: string): Conversation {
     intent = this.resolveIntent(intent);
 
-    let [flowName, intentName] = intent.split(Kiai.INTENT_DELIMITER);
+    let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 
     this.currentFlow = flowName;
 
     const handler = this.flows[flowName][intentName];
 
     if (typeof handler !== 'function') {
-      throw new Error(`Target intent not found: "${flowName}${Kiai.INTENT_DELIMITER}${intentName}"`);
+      throw new Error(`Target intent not found: "${flowName}${App.INTENT_DELIMITER}${intentName}"`);
     }
 
     return this.addHandler(handler);
@@ -359,7 +360,7 @@ export default abstract class Conversation {
   }
 
   public addHandler(handler: TIntentHandler): Conversation {
-    this.handlers.push(handler);
+    this.intentHandlers.push(handler);
     return this;
   }
 
@@ -376,8 +377,8 @@ export default abstract class Conversation {
   public handleIntent(): Promise<any> {
     return new Promise(resolve => {
       const executeHandler = (): void => {
-        if (!this.handlers.length) resolve();
-        else Promise.resolve(this.handlers.shift()(this)).then(() => executeHandler());
+        if (!this.intentHandlers.length) resolve();
+        else Promise.resolve(this.intentHandlers.shift()(this)).then(() => executeHandler());
       };
 
       setTimeout(executeHandler, 0);
@@ -385,7 +386,7 @@ export default abstract class Conversation {
   }
 
   protected resolveIntent(intent: string): string {
-    let [flowName, intentName] = intent.split(Kiai.INTENT_DELIMITER);
+    let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 
     if (!flowName) flowName = this.currentFlow;
 
@@ -395,6 +396,6 @@ export default abstract class Conversation {
       intentName = <string>flow.entryPoint || 'start';
     }
 
-    return `${flowName}${Kiai.INTENT_DELIMITER}${intentName}`;
+    return `${flowName}${App.INTENT_DELIMITER}${intentName}`;
   }
 }

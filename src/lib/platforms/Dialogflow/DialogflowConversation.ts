@@ -10,7 +10,7 @@ import {
   SurfaceCapability,
   BasicCard,
 } from 'actions-on-google';
-import { sample, range } from 'lodash';
+import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/Types';
 
@@ -70,8 +70,7 @@ export default class DialogflowConversation extends Conversation {
 
     const url = `${this.storageUrl}images/${image}.png`;
 
-    // return this.add(new Image({ url, alt }));
-    return this.add(new BasicCard({ image: new Image({ url, alt }), display: 'WHITE' }));
+    return this.add(new Image({ url, alt }));
   }
 
   public canTransfer(...capabilities: SurfaceCapability[]): boolean {
@@ -199,13 +198,13 @@ export default class DialogflowConversation extends Conversation {
 
     this.respond();
 
-    const images = this.responses.filter(response => response instanceof Image);
-    if (images.length > 1) {
-      console.warn('Only 1 image per response allowed. Only the last image will be shown.');
-      const image = images.pop();
-      this.responses = this.responses.filter(
-        response => !(response instanceof Image) || response === image,
-      );
+    const imagesAndCards = this.responses.filter(
+      response => response instanceof Image || response instanceof BasicCard,
+    );
+    if (imagesAndCards.length > 1) {
+      console.warn('Only 1 image or card per response allowed. Only the last image will be shown.');
+      imagesAndCards.pop();
+      this.responses = without(this.responses, ...imagesAndCards);
     }
 
     this.responses.forEach(item => {

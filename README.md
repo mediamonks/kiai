@@ -61,4 +61,4 @@ module.exports = {
 - In Dialogflow, click the link on the right to test your Action in the Actions on Google simulator.
 
 ### Documentation:
-[Getting Started](https://github.com/mediamonks/kiai-skeleton/blob/master/docs/getting-started.md)
+[Getting Started](https://github.com/mediamonks/kiai/blob/master/docs/getting-started.md)

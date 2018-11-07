@@ -294,15 +294,15 @@ export default abstract class Conversation {
 
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 
-    this.currentFlow = flowName;
-    this.currentIntent = intentName;
-
     const handler = this.flows[flowName][intentName];
 
     if (typeof handler !== 'function') {
       throw new Error(`Target intent not found: "${flowName}${App.INTENT_DELIMITER}${intentName}"`);
     }
-
+  
+    this.currentFlow = flowName;
+    this.currentIntent = intentName;
+  
     return this.addHandler(handler);
   }
 

@@ -179,7 +179,7 @@ export default class DialogflowConversation extends Conversation {
     subtitle,
     text,
     image,
-    buttons,
+    buttons = [],
   }: {
     title?: string;
     subtitle?: string;
@@ -187,14 +187,14 @@ export default class DialogflowConversation extends Conversation {
     image?: string;
     buttons?: { url: string; title: string }[];
   }): Conversation {
-    const imageUrl = `${this.storageUrl}images/${image}.png`;
+    const imageUrl = image && `${this.storageUrl}images/${image}.png`;
 
     return this.add(
       new BasicCard({
         title,
         subtitle,
         text,
-        image: new Image({ url: imageUrl, alt: image }),
+        image: image && new Image({ url: imageUrl, alt: image }),
         buttons: buttons.map(button => new Button(button)),
       }),
     );

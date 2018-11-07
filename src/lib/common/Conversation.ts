@@ -295,6 +295,7 @@ export default abstract class Conversation {
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 
     this.currentFlow = flowName;
+    this.currentIntent = intentName;
 
     const handler = this.flows[flowName][intentName];
 

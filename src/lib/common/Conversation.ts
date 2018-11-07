@@ -31,9 +31,9 @@ export default abstract class Conversation {
   public location: any;
 
   public currentIntent: string;
-  
+
   protected readonly config: TAppConfig;
-  
+
   protected _locale: string = 'en-US';
 
   protected output: any[] = [];
@@ -142,7 +142,7 @@ export default abstract class Conversation {
   protected get storageUrl(): string {
     return <string>(this.config.storage.rootUrl || '');
   }
-  
+
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -196,9 +196,23 @@ export default abstract class Conversation {
 
   public abstract speak(voice: string, text: string): Conversation;
 
-  // abstract login(speech?: string): void;
+  // public abstract login(speech?: string): void;
 
-  // abstract event(event: string): Conversation;
+  // public abstract event(event: string): Conversation;
+
+  public abstract showCard({
+    title,
+    subtitle,
+    text,
+    image,
+    buttons,
+  }: {
+    title?: string;
+    subtitle?: string;
+    text?: string;
+    image?: string;
+    buttons?: { url: string; title: string }[];
+  }): Conversation;
 
   public abstract requestPermission(
     permissions: string[] | string,

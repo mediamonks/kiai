@@ -9,6 +9,7 @@ import {
   NewSurface,
   SurfaceCapability,
   BasicCard,
+  Button,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -171,6 +172,32 @@ export default class DialogflowConversation extends Conversation {
         permissions: permissions as GoogleActionsV2PermissionValueSpecPermissions[],
       }),
     ).expect('permission_confirmation');
+  }
+
+  public showCard({
+    title,
+    subtitle,
+    text,
+    image,
+    buttons,
+  }: {
+    title?: string;
+    subtitle?: string;
+    text?: string;
+    image?: string;
+    buttons?: { url: string; title: string }[];
+  }): Conversation {
+    const imageUrl = `${this.storageUrl}images/${image}.png`;
+
+    return this.add(
+      new BasicCard({
+        title,
+        subtitle,
+        text,
+        image: new Image({ url: imageUrl, alt: image }),
+        buttons: buttons.map(button => new Button(button)),
+      }),
+    );
   }
 
   public respond(): DialogflowConversation {

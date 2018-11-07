@@ -1,14 +1,13 @@
 {
   "name": "kiai",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "",
   "main": "./Kiai.js",
   "scripts": {
     "dev": "npm run dev:ts",
     "test": "echo 'Coming soon!'",
     "build": "npm-run-all build:ts build:dist",
-    "deploy": "npm version patch && git push origin",
-    "publish": "VERSION=$(cat package.json  | grep version  | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag $VERSION && git push origin --tags",
+    "deploy": "npm version patch && git push origin && git push origin --tags",
     "dev:ts": "tsc --watch",
     "build:ts": "tsc",
     "build:dist": "rm -rf lib && rm Kiai.js && mv build/* ."

@@ -1,10 +1,18 @@
 ### Getting Started
 
+#### With a new project
+
 - Clone or copy the [kiai-skeleton](https://github.com/mediamonks/kiai-skeleton).
 - Run `$ yarn`.
-- Update the `name`, `version`, `description`, `repository` and `author` fields in `package.json`.
+- Update the `name`, `version`, `description`, `repository` and `author` fields in `./package.json`.
 - Create a [Google Cloud](https://console.cloud.google.com) project.
 - Create a [Dialogflow](https://console.dialogflow.com) agent and select the Google project you just created.
+- In your Dialogflow agent, go to `Settings (cogwheel) > Export and Import` and import the `./Kiai-Skeleton.zip`.
+- Go to [Google Account Activity Controls](https://myaccount.google.com/activitycontrols) and ensure that `Web & App Activity`, `Device Information` and `Voice & Audio Activity` are enabled.
+
+#### On an existing project
+
+
 
 #### Defining flows
 See `./docs/flows.md`

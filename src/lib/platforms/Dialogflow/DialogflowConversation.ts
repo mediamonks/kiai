@@ -161,7 +161,7 @@ export default class DialogflowConversation extends Conversation {
   ): Conversation {
     if (typeof permissions === 'string') permissions = [permissions];
 
-    const grantedIntent = this.resolveIntent(this.currentIntent);
+    const grantedIntent = this.resolveIntent(`:${this.currentIntent}`);
     deniedIntent = this.resolveIntent(deniedIntent);
 
     this.permissionCallbacks = [grantedIntent, deniedIntent];

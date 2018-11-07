@@ -11,7 +11,7 @@ export default class Dialogflow extends Platform {
   public readonly IDENTIFIER: string = 'dialogflow';
 
   public readonly INTENT_DELIMITER: string = '_';
-  
+
   public constructor({
     config,
     clientId = '',
@@ -33,7 +33,7 @@ export default class Dialogflow extends Platform {
 
     this.registerPermissionIntents();
   }
-  
+
   public get requestHandler(): () => any {
     return this.dialogflow;
   }
@@ -58,7 +58,9 @@ export default class Dialogflow extends Platform {
         this.conversation.timesInputRepeated = this.conversation.repromptCount;
         this.conversation.repromptCount = 0;
         this.conversation.clearContext();
-        [this.conversation.currentFlow, this.conversation.currentIntent] = intent.displayName.split(this.INTENT_DELIMITER);
+        [this.conversation.currentFlow, this.conversation.currentIntent] = intent.displayName.split(
+          this.INTENT_DELIMITER,
+        );
       }
 
       this.conversation.addHandler(handler);

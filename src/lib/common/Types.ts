@@ -15,7 +15,7 @@ export type TDialogText = { [locale: string]: TMapping };
 
 export type TLocales = { [locale: string]: TMapping };
 
-export type TIntentHandler = (conversation: Conversation) => void | Promise<any>;
+export type TIntentHandler = (conversation: Conversation, payload?: any) => void | Promise<any>;
 
 export type TFlow = {
   [key: string]: TIntentHandler | { [intentName: string]: TIntentHandler } | string;

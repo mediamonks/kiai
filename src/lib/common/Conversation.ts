@@ -44,7 +44,7 @@ export default abstract class Conversation {
 
   protected lastSpeech: string = '';
 
-  private intentHandlers: TIntentHandler[] = [];
+  private intentHandlers: { handler: TIntentHandler, payload: any}[] = [];
 
   private tracker: Tracker;
 
@@ -154,6 +154,11 @@ export default abstract class Conversation {
   private get returnDirectives(): string[] {
     if (!this.sessionData.__callbacks) this.sessionData.__callbacks = <string[]>[];
     return <string[]>this.sessionData.__callbacks;
+  }
+
+  private get payloads(): any[] {
+    if (!this.sessionData.__payloads) this.sessionData.__payloads = <any[]>[];
+    return <any[]>this.sessionData.__payloads;
   }
 
   private get dialog(): TKeyValue {
@@ -289,7 +294,7 @@ export default abstract class Conversation {
     return this.add(speech);
   }
 
-  public next(intent: string): Conversation {
+  public next(intent: string, payload?: any): Conversation {
     intent = this.resolveIntent(intent);
 
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
@@ -299,11 +304,11 @@ export default abstract class Conversation {
     if (typeof handler !== 'function') {
       throw new Error(`Target intent not found: "${flowName}${App.INTENT_DELIMITER}${intentName}"`);
     }
-  
+
     this.currentFlow = flowName;
     this.currentIntent = intentName;
-  
-    return this.addHandler(handler);
+
+    return this.addHandler(handler, payload);
   }
 
   public returnTo(intent: string): Conversation {
@@ -340,12 +345,12 @@ export default abstract class Conversation {
     return this;
   }
 
-  public return(): Conversation {
+  public return(payload: TKeyValue): Conversation {
     const intentDirective = this.returnDirectives.pop();
 
     if (!intentDirective) throw new Error('Conversation.return() called but no return intent set.');
 
-    return this.next(intentDirective);
+    return this.next(intentDirective, payload);
   }
 
   public confirm(options: TMapping): Conversation {
@@ -369,8 +374,9 @@ export default abstract class Conversation {
     return this;
   }
 
-  public addHandler(handler: TIntentHandler): Conversation {
-    this.intentHandlers.push(handler);
+  public addHandler(handler: TIntentHandler, payload?: any): Conversation {
+    this.intentHandlers.push({ handler, payload });
+    this.payloads.push(payload);
     return this;
   }
 
@@ -387,8 +393,14 @@ export default abstract class Conversation {
   public handleIntent(): Promise<any> {
     return new Promise(resolve => {
       const executeHandler = (): void => {
-        if (!this.intentHandlers.length) resolve();
-        else Promise.resolve(this.intentHandlers.shift()(this)).then(() => executeHandler());
+        if (!this.intentHandlers.length) {
+          resolve();
+        } else {
+          const { handler, payload } = this.intentHandlers.shift();
+          Promise.resolve(handler(this, payload)).then(() =>
+            executeHandler(),
+          );
+        }
       };
 
       setTimeout(executeHandler, 0);

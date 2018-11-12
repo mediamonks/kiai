@@ -7,7 +7,7 @@
     "dev": "npm run dev:ts",
     "test": "echo 'Coming soon!'",
     "build": "npm-run-all build:ts build:dist",
-    "deploy": "npm version patch && git push origin && git push origin --tags",
+    "deploy": "npm version minor && git push origin && git push origin --tags",
     "dev:ts": "tsc --watch",
     "build:ts": "tsc",
     "build:dist": "rm -rf lib && rm Kiai.js && mv build/* ."

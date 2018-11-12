@@ -46,17 +46,18 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public clearContext(): DialogflowConversation {
-    if (this.currentFlow) {
-      this.conversationObject.contexts.delete(this.currentFlow);
-      this.conversationObject.contexts.delete(this.currentFlow.toLowerCase());
-    }
+    // if (this.currentFlow) {
+    //   this.conversationObject.contexts.delete(this.currentFlow);
+    //   this.conversationObject.contexts.delete(this.currentFlow.toLowerCase());
+    // }
+    //
+    // if (this.context) {
+    //   this.conversationObject.contexts.delete(this.context);
+    //   this.conversationObject.contexts.delete(this.context.toLowerCase());
+    // }
 
-    if (this.context) {
-      this.conversationObject.contexts.delete(this.context);
-      this.conversationObject.contexts.delete(this.context.toLowerCase());
-      this.previousContext = this.context;
-      this.context = '';
-    }
+    this.previousContext = this.context;
+    this.context = '';
 
     return this;
   }
@@ -220,7 +221,7 @@ export default class DialogflowConversation extends Conversation {
   }
 
   protected sendResponse(): DialogflowConversation {
-    this.conversationObject.contexts.set(this.currentFlow, 1);
+    // this.conversationObject.contexts.set(this.currentFlow, 1);
     if (this.context) this.conversationObject.contexts.set(this.context, 1);
 
     this.respond();

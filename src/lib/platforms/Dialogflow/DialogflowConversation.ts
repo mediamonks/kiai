@@ -45,17 +45,7 @@ export default class DialogflowConversation extends Conversation {
     this.conversationObject = conversationObject;
   }
 
-  public clearContext(): DialogflowConversation {
-    // if (this.currentFlow) {
-    //   this.conversationObject.contexts.delete(this.currentFlow);
-    //   this.conversationObject.contexts.delete(this.currentFlow.toLowerCase());
-    // }
-    //
-    // if (this.context) {
-    //   this.conversationObject.contexts.delete(this.context);
-    //   this.conversationObject.contexts.delete(this.context.toLowerCase());
-    // }
-
+  public resetContext(): DialogflowConversation {
     this.previousContext = this.context;
     this.context = '';
 
@@ -221,8 +211,14 @@ export default class DialogflowConversation extends Conversation {
   }
 
   protected sendResponse(): DialogflowConversation {
-    // this.conversationObject.contexts.set(this.currentFlow, 1);
-    if (this.context) this.conversationObject.contexts.set(this.context, 1);
+    if (this.context) this.conversationObject.contexts.set(this.context, 999);
+  
+    if (this.previousContext && this.previousContext !== this.context) {
+      this.conversationObject.contexts.delete(this.previousContext);
+      this.conversationObject.contexts.delete(this.previousContext.toLowerCase());
+    }
+    
+    console.log(this.conversationObject.contexts);
 
     this.respond();
 

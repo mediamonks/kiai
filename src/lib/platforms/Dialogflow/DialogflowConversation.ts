@@ -135,7 +135,7 @@ export default class DialogflowConversation extends Conversation {
 
   public speak(voice: string, text: string): Conversation {
     return this.add(
-      `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.sfx}${
+      `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.voice}${
         this.locale
       }/${voice}.wav">${text}</audio>`,
     );

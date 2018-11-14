@@ -9,6 +9,7 @@ import {
   NewSurface,
   SurfaceCapability,
   BasicCard,
+  List,
   Button,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
@@ -123,7 +124,7 @@ export default class DialogflowConversation extends Conversation {
     );
   }
 
-  public speak(voice: string, text: string): Conversation {
+  public speak(voice: string, text: string = ''): Conversation {
     return this.add(
       `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.voice}${
         this.locale
@@ -191,6 +192,20 @@ export default class DialogflowConversation extends Conversation {
     );
   }
 
+  public list(
+    title: string,
+    items: { title: string; synonyms?: string[]; description?: string; imageUrl?: string }[],
+  ): Conversation {
+    items = items.map(item => ({
+      title: item.title,
+      optionInfo: { key: item.title, synonyms: item.synonyms },
+      description: item.description,
+      image: item.imageUrl && new Image({ url: item.imageUrl, alt: item.title }),
+    }));
+
+    return this.add(new List({ title, items }));
+  }
+
   public respond(): DialogflowConversation {
     const simpleResponses = this.output.filter(response => typeof response === 'string');
 
@@ -212,12 +227,12 @@ export default class DialogflowConversation extends Conversation {
 
   protected sendResponse(): DialogflowConversation {
     if (this.context) this.conversationObject.contexts.set(this.context, 999);
-  
+
     if (this.previousContext && this.previousContext !== this.context) {
       this.conversationObject.contexts.delete(this.previousContext);
       this.conversationObject.contexts.delete(this.previousContext.toLowerCase());
     }
-    
+
     this.respond();
 
     const imagesAndCards = this.responses.filter(

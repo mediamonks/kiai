@@ -44,7 +44,7 @@ export default abstract class Conversation {
 
   protected lastSpeech: string = '';
 
-  private intentHandlers: { handler: TIntentHandler, payload: any}[] = [];
+  private intentHandlers: { handler: TIntentHandler; payload: any }[] = [];
 
   private tracker: Tracker;
 
@@ -199,7 +199,7 @@ export default abstract class Conversation {
 
   public abstract play(sound: string, fallback?: string): Conversation;
 
-  public abstract speak(voice: string, text: string): Conversation;
+  public abstract speak(voice: string, text?: string): Conversation;
 
   // public abstract login(speech?: string): void;
 
@@ -226,6 +226,11 @@ export default abstract class Conversation {
   ): Conversation;
 
   public abstract respond(): Conversation;
+
+  public abstract list(
+    title: string,
+    items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string }[],
+  ): Conversation;
 
   protected abstract add(output: any): Conversation;
 
@@ -397,9 +402,7 @@ export default abstract class Conversation {
           resolve();
         } else {
           const { handler, payload } = this.intentHandlers.shift();
-          Promise.resolve(handler(this, payload)).then(() =>
-            executeHandler(),
-          );
+          Promise.resolve(handler(this, payload)).then(() => executeHandler());
         }
       };
 

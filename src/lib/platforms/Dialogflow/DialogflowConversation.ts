@@ -218,8 +218,6 @@ export default class DialogflowConversation extends Conversation {
       this.conversationObject.contexts.delete(this.previousContext.toLowerCase());
     }
     
-    console.log(this.conversationObject.contexts);
-
     this.respond();
 
     const imagesAndCards = this.responses.filter(

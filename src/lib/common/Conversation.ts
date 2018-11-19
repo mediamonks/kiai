@@ -285,8 +285,8 @@ export default abstract class Conversation {
       speech = this.dialog[dialogVariant];
 
       if (params) {
-        params.forEach((value, index) => {
-          speech = speech.replace(`{${index}}`, value);
+        Object.keys(params).forEach(key => {
+          speech = speech.replace(`{${key}}`, params[key]);
         });
       }
 

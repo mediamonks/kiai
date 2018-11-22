@@ -37,24 +37,8 @@ export default class App {
 
   private _framework: IFramework;
 
-  public constructor({
-    flows = {},
-    locales = {},
-    localeMapping = {},
-    dialog = {},
-    voice = {},
-    tracking = {},
-    storage = {},
-  }: TAppConfig) {
-    this.config = {
-      flows,
-      locales,
-      localeMapping,
-      dialog,
-      voice,
-      tracking,
-      storage,
-    };
+  public constructor(config: TAppConfig) {
+    this.config = config;
   }
 
   public get platforms(): Platform[] {

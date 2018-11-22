@@ -4,7 +4,7 @@ A framework for quickly and easily setting up and deploying Actions on Google pr
 
 Features include:
 
-- An easy-to use API for defining flows
+- An easy-to-use API for defining flows
 - Running on and deploying to Express, Firebase or Google Cloud Functions
 - Multi-language support
 - Integrated support for voice-over and dialog variants

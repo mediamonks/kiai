@@ -12,7 +12,7 @@ import {
   List,
   Button,
 } from 'actions-on-google';
-import { sample, range, without } from 'lodash';
+import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/Types';
 
@@ -117,11 +117,9 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public play(sound: string, fallback: string = ''): Conversation {
-    return this.add(
-      `<audio src="${this.config.storage.rootUrl}${
-        this.config.storage.paths.sfx
-      }${sound}.mp3">${fallback}</audio>`,
-    );
+    const path = `${this.config.storage.rootUrl}${this.config.storage.paths.sfx}`;
+    const extension = get(this.config, ['sfx', 'extension'], 'mp3');
+    return this.add(`<audio src="${path}${sound}.${extension}">${fallback}</audio>`);
   }
 
   public speak(voice: string, text: string = ''): Conversation {

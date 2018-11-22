@@ -56,6 +56,9 @@ export type TAppConfig = {
   voice: TVoiceIndex;
   tracking: TTrackingConfig;
   storage: TStorageConfig;
+  sfx?: {
+    extension?: string
+  }
 }
 
 export interface IPlatformConstructor {

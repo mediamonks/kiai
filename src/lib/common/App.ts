@@ -38,7 +38,7 @@ export default class App {
   private _framework: IFramework;
 
   public constructor(config: TAppConfig) {
-    this.config = config;
+    Object.assign(this.config, config);
   }
 
   public get platforms(): Platform[] {

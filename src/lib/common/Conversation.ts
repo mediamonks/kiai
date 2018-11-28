@@ -409,6 +409,10 @@ export default abstract class Conversation {
       setTimeout(executeHandler, 0);
     }).then(() => this.sendResponse());
   }
+  
+  public abstract hasDisplay(): boolean;
+  
+  public abstract hasBrowser(): boolean;
 
   protected resolveIntent(intent: string): string {
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);

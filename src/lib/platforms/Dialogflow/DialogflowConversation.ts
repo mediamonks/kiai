@@ -218,6 +218,18 @@ export default class DialogflowConversation extends Conversation {
     return this;
   }
 
+  public hasDisplay(): boolean {
+    return this.conversationObject.surface.capabilities.has(
+      DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
+    );
+  }
+
+  public hasBrowser(): boolean {
+    return this.conversationObject.surface.capabilities.has(
+      DialogflowConversation.CAPABILITIES.WEB_BROWSER,
+    );
+  }
+
   protected add(output: any): Conversation {
     this.output.push(output);
     return this;

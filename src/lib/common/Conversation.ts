@@ -12,6 +12,7 @@ import {
   TTrackingDataCollector,
 } from './Types';
 import Tracker from './Tracker';
+import { RegisterUpdateOptions } from 'actions-on-google';
 
 export default abstract class Conversation {
   public abstract readonly PERMISSIONS: {
@@ -232,6 +233,8 @@ export default abstract class Conversation {
     items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string }[],
   ): Conversation;
 
+  public abstract setDailyUpdate(options: RegisterUpdateOptions): Conversation;
+
   protected abstract add(output: any): Conversation;
 
   protected abstract sendResponse(): Conversation;
@@ -409,9 +412,9 @@ export default abstract class Conversation {
       setTimeout(executeHandler, 0);
     }).then(() => this.sendResponse());
   }
-  
+
   public abstract hasDisplay(): boolean;
-  
+
   public abstract hasBrowser(): boolean;
 
   protected resolveIntent(intent: string): string {

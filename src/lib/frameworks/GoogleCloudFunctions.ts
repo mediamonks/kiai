@@ -1,6 +1,6 @@
 import IFramework from '../common/IFramework';
 import App from '../common/App';
-import { TRequestHandler } from '../common/Types';
+import { TRequestHandler } from '../common/types';
 
 export default class GoogleCloudFunctions implements IFramework {
   public constructor(app: App) {

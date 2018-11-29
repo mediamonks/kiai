@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./src/",
     "rootDir": "./src/",
-    "outDir": "./build",
+    "outDir": "./dist/",
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "noEmit": false,
@@ -21,5 +21,5 @@
     "strictNullChecks": false,
     "sourceMap": true
   },
-  "include": ["./src/**/*", "./src/**/*"]
+  "include": ["./src/**/*"]
 }

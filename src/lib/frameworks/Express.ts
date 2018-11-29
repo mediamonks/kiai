@@ -1,6 +1,6 @@
 import IFramework from '../common/IFramework';
 import App from '../common/App';
-import { TRequestHandler } from '../common/Types';
+import { TRequestHandler } from '../common/types';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 

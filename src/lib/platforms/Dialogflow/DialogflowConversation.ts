@@ -14,7 +14,7 @@ import {
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
-import { TKeyValue } from '../../common/Types';
+import { TKeyValue } from '../../common/types';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {
@@ -261,7 +261,7 @@ export default class DialogflowConversation extends Conversation {
     this.responses = [];
 
     this.previousSpeech = this.lastSpeech;
-    this.lastSpeech = '';
+    this.lastSpeech = { key: '' };
 
     this.previousSuggestions = this.suggestions;
     if (this.suggestions.length) {

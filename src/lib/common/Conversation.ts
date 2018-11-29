@@ -9,8 +9,9 @@ import {
   TKeyValue,
   TLocales,
   TMapping,
+  TSpeech,
   TTrackingDataCollector,
-} from './Types';
+} from './types';
 import Tracker from './Tracker';
 
 export default abstract class Conversation {
@@ -42,7 +43,7 @@ export default abstract class Conversation {
 
   protected suggestions: string[] = [];
 
-  protected lastSpeech: string = '';
+  protected lastSpeech: TSpeech = { key: '' };
 
   private intentHandlers: { handler: TIntentHandler; payload: any }[] = [];
 
@@ -110,12 +111,12 @@ export default abstract class Conversation {
     return <string>this.sessionData.__previousContext;
   }
 
-  protected set previousSpeech(speech: string) {
+  protected set previousSpeech(speech: { key: string; params?: TMapping }) {
     this.sessionData.__lastSpeech = speech;
   }
 
-  protected get previousSpeech(): string {
-    return <string>(this.sessionData.__lastSpeech || '');
+  protected get previousSpeech(): TSpeech {
+    return <TSpeech>(this.sessionData.__lastSpeech || { key: '' });
   }
 
   protected set previousSuggestions(suggestions: string[]) {
@@ -257,10 +258,10 @@ export default abstract class Conversation {
     return msg({ ...params });
   }
 
-  public say(key: string, params?: string[]): Conversation {
+  public say(key: string, params?: TMapping): Conversation {
     key = String(key);
 
-    this.lastSpeech = key;
+    this.lastSpeech = { key, params };
 
     const regex = new RegExp(`^${key.replace('*', '\\d+')}$`);
     let dialogVariants = Object.keys(this.dialog).filter(key => regex.test(key));
@@ -340,7 +341,7 @@ export default abstract class Conversation {
   }
 
   public repeat(): Conversation {
-    if (this.previousSpeech) this.say(this.previousSpeech);
+    if (this.previousSpeech.key) this.say(this.previousSpeech.key, this.previousSpeech.params);
     this.suggest(...this.previousSuggestions);
     return this;
   }
@@ -409,9 +410,9 @@ export default abstract class Conversation {
       setTimeout(executeHandler, 0);
     }).then(() => this.sendResponse());
   }
-  
+
   public abstract hasDisplay(): boolean;
-  
+
   public abstract hasBrowser(): boolean;
 
   protected resolveIntent(intent: string): string {

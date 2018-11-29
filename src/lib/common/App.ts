@@ -8,7 +8,7 @@ import {
   IPlatformConstructor,
   TAppConfig,
   TConfig,
-} from './Types';
+} from './types';
 
 export default class App {
   public static INTENT_DELIMITER: string = ':';

@@ -1,5 +1,5 @@
 import App from './App';
-import { TRequestHandler } from './Types';
+import { TRequestHandler } from './types';
 
 export default interface IFramework {
   use(name: string, handler: TRequestHandler): void;

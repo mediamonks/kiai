@@ -2,14 +2,13 @@
   "name": "kiai",
   "version": "1.5.0",
   "description": "",
-  "main": "./Kiai.js",
+  "main": "./dist/Kiai.js",
   "scripts": {
     "dev": "npm run dev:ts",
     "test": "echo 'Coming soon!'",
-    "build": "npm-run-all build:ts build:dist",
+    "build": "npm run build:ts",
     "dev:ts": "tsc --watch",
-    "build:ts": "tsc",
-    "build:dist": "rm -rf lib && rm Kiai.js && mv build/* ."
+    "build:ts": "tsc"
   },
   "dependencies": {
     "actions-on-google": "^2.4.1",

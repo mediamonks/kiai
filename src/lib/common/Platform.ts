@@ -1,4 +1,4 @@
-import { TAppConfig, TFlow, TFlows, TIntentHandler, TMapping } from './Types';
+import { TAppConfig, TFlow, TFlows, TIntentHandler, TMapping } from './types';
 
 export default abstract class Platform {
   public abstract readonly IDENTIFIER: string;

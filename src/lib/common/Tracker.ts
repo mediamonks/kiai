@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { TKeyValue, TTrackingConfig } from './Types';
+import { TKeyValue, TTrackingConfig } from './types';
 import * as Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 

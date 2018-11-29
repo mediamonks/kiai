@@ -1,4 +1,4 @@
-import { TRequestHandler } from '../common/Types';
+import { TRequestHandler } from '../common/types';
 import IFramework from '../common/IFramework';
 import App from '../common/App';
 

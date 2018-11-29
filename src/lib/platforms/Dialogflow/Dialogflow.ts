@@ -1,7 +1,7 @@
 import { dialogflow } from 'actions-on-google';
 import DialogflowConversation from './DialogflowConversation';
 import Platform from '../../common/Platform';
-import { TAppConfig, TIntentHandler, TKeyValue } from '../../common/Types';
+import { TAppConfig, TIntentHandler, TKeyValue } from '../../common/types';
 
 export default class Dialogflow extends Platform {
   private readonly dialogflow: any;

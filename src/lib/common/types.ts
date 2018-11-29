@@ -36,7 +36,7 @@ export type TTrackingConfig = {
   googleAnalytics?: {
     trackingId: string;
   };
-  dataCollector?: TTrackingDataCollector
+  dataCollector?: TTrackingDataCollector;
 };
 
 export type TStorageConfig = {
@@ -57,9 +57,11 @@ export type TAppConfig = {
   tracking: TTrackingConfig;
   storage: TStorageConfig;
   sfx?: {
-    extension?: string
-  }
-}
+    extension?: string;
+  };
+};
+
+export type TSpeech = { key: string; params?: TMapping };
 
 export interface IPlatformConstructor {
   new (options: { config: TAppConfig }): Platform;

@@ -170,7 +170,7 @@ export default class DialogflowConversation extends Conversation {
   /** You also have to add the 'intentName' specified in @param options.
    To the AoG Console and enable user engagement for it. */
   public enableTimedNotification(options: RegisterUpdateOptions): Conversation {
-    const intent = options.intent.replace(App.INTENT_DELIMITER, ':');
+    const intent = options.intent.replace('_', App.INTENT_DELIMITER);
     return this.add(new RegisterUpdate({ ...options, intent }));
   }
 

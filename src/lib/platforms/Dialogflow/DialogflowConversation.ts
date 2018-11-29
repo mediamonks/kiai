@@ -17,6 +17,7 @@ import {
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/Types';
+import App from 'Kiai';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {
@@ -168,8 +169,9 @@ export default class DialogflowConversation extends Conversation {
 
   /** You also have to add the 'intentName' specified in @param options.
    To the AoG Console and enable user engagement for it. */
-  public setDailyUpdate(options: RegisterUpdateOptions): Conversation {
-    return this.add(new RegisterUpdate(options));
+  public enableTimedNotification(options: RegisterUpdateOptions): Conversation {
+    const intent = options.intent.replace(App.INTENT_DELIMITER, ':');
+    return this.add(new RegisterUpdate({ ...options, intent }));
   }
 
   public showCard({

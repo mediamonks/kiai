@@ -12,7 +12,6 @@ import {
   TTrackingDataCollector,
 } from './Types';
 import Tracker from './Tracker';
-import { RegisterUpdateOptions } from 'actions-on-google';
 
 export default abstract class Conversation {
   public abstract readonly PERMISSIONS: {
@@ -233,7 +232,7 @@ export default abstract class Conversation {
     items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string }[],
   ): Conversation;
 
-  public abstract setDailyUpdate(options: RegisterUpdateOptions): Conversation;
+  public abstract enableTimedNotification(options: any): Conversation;
 
   protected abstract add(output: any): Conversation;
 

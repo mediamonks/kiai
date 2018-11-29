@@ -166,6 +166,8 @@ export default class DialogflowConversation extends Conversation {
     ).expect('permission_confirmation');
   }
 
+  /** You also have to add the 'intentName' specified in @param options.
+   To the AoG Console and enable user engagement for it. */
   public setDailyUpdate(options: RegisterUpdateOptions): Conversation {
     return this.add(new RegisterUpdate(options));
   }

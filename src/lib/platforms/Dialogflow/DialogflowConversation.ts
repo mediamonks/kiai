@@ -11,6 +11,8 @@ import {
   BasicCard,
   List,
   Button,
+  RegisterUpdate,
+  RegisterUpdateOptions,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -162,6 +164,10 @@ export default class DialogflowConversation extends Conversation {
         permissions: permissions as GoogleActionsV2PermissionValueSpecPermissions[],
       }),
     ).expect('permission_confirmation');
+  }
+
+  public setDailyUpdate(options: RegisterUpdateOptions): Conversation {
+    return this.add(new RegisterUpdate(options));
   }
 
   public showCard({

@@ -5,10 +5,10 @@
   "main": "./dist/Kiai.js",
   "scripts": {
     "dev": "npm run dev:ts",
-    "test": "echo 'Coming soon!'",
-    "build": "npm run build:ts",
     "dev:ts": "tsc --watch",
-    "build:ts": "tsc"
+    "build": "npm run build:ts",
+    "build:ts": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "actions-on-google": "^2.4.1",

@@ -11,10 +11,13 @@ import {
   BasicCard,
   List,
   Button,
+  RegisterUpdate,
+  RegisterUpdateOptions,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/types';
+import App from 'Kiai';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {
@@ -162,6 +165,13 @@ export default class DialogflowConversation extends Conversation {
         permissions: permissions as GoogleActionsV2PermissionValueSpecPermissions[],
       }),
     ).expect('permission_confirmation');
+  }
+
+  /** You also have to add the 'intentName' specified in @param options.
+   To the AoG Console and enable user engagement for it. */
+  public enableTimedNotification(options: RegisterUpdateOptions): Conversation {
+    const intent = options.intent.replace(App.INTENT_DELIMITER, '_');
+    return this.add(new RegisterUpdate({ ...options, intent }));
   }
 
   public showCard({

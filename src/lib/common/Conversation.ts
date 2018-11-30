@@ -233,6 +233,8 @@ export default abstract class Conversation {
     items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string }[],
   ): Conversation;
 
+  public abstract enableTimedNotification(options: any): Conversation;
+
   protected abstract add(output: any): Conversation;
 
   protected abstract sendResponse(): Conversation;

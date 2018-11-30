@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const actions_on_google_1 = require("actions-on-google");
 const lodash_1 = require("lodash");
 const Conversation_1 = require("../../common/Conversation");
+const Kiai_1 = require("Kiai");
 class DialogflowConversation extends Conversation_1.default {
     constructor() {
         super(...arguments);
@@ -89,6 +90,12 @@ class DialogflowConversation extends Conversation_1.default {
             context: text,
             permissions: permissions,
         })).expect('permission_confirmation');
+    }
+    /** You also have to add the 'intentName' specified in @param options.
+     To the AoG Console and enable user engagement for it. */
+    enableTimedNotification(options) {
+        const intent = options.intent.replace(Kiai_1.default.INTENT_DELIMITER, '_');
+        return this.add(new actions_on_google_1.RegisterUpdate(Object.assign({}, options, { intent })));
     }
     showCard({ title, subtitle, text, image, buttons = [], }) {
         const imageUrl = image && `${this.storageUrl}images/${image}.png`;

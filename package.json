@@ -2,7 +2,7 @@
   "name": "kiai",
   "version": "1.7.5",
   "description": "Kiai Voice Action Framework",
-  "main": "./dist/Kiai.js",
+  "main": "dist/Kiai.js",
   "scripts": {
     "dev": "npm run dev:ts",
     "test": "echo 'Coming soon!'",

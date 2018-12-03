@@ -34,7 +34,7 @@ class DialogflowConversation extends Conversation_1.default {
         if (matches) {
             image = image.replace(wildcard, String(lodash_1.sample(lodash_1.range(+matches[1])) + 1));
         }
-        const url = `${this.storageUrl}images/${image}.png`;
+        const url = this.getImageUrl(image);
         return this.add(new actions_on_google_1.Image({ url, alt }));
     }
     canTransfer(...capabilities) {
@@ -98,12 +98,12 @@ class DialogflowConversation extends Conversation_1.default {
         return this.add(new actions_on_google_1.RegisterUpdate(Object.assign({}, options, { intent })));
     }
     showCard({ title, subtitle, text, image, buttons = [], }) {
-        const imageUrl = image && `${this.storageUrl}images/${image}.png`;
+        let imageUrl = this.getImageUrl(image);
         return this.add(new actions_on_google_1.BasicCard({
             title,
             subtitle,
             text,
-            image: image && new actions_on_google_1.Image({ url: imageUrl, alt: image }),
+            image: imageUrl && new actions_on_google_1.Image({ url: imageUrl, alt: image }),
             buttons: buttons.map(button => new actions_on_google_1.Button(button)),
         }));
     }
@@ -173,6 +173,11 @@ class DialogflowConversation extends Conversation_1.default {
         const capabilities = this.conversationObject.surface.capabilities;
         return (capabilities.has(DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT) &&
             capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER));
+    }
+    getImageUrl(image) {
+        if (image.match(/^https?:\/\//))
+            return image;
+        return `${this.storageUrl}images/${image}.png`;
     }
 }
 DialogflowConversation.CAPABILITIES = {

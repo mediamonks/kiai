@@ -64,7 +64,7 @@ export default class DialogflowConversation extends Conversation {
       image = image.replace(wildcard, String(sample(range(+matches[1])) + 1));
     }
 
-    const url = `${this.storageUrl}images/${image}.png`;
+    const url = this.getImageUrl(image);
 
     return this.add(new Image({ url, alt }));
   }
@@ -187,14 +187,14 @@ export default class DialogflowConversation extends Conversation {
     image?: string;
     buttons?: { url: string; title: string }[];
   }): Conversation {
-    const imageUrl = image && `${this.storageUrl}images/${image}.png`;
-
+    let imageUrl = this.getImageUrl(image);
+    
     return this.add(
       new BasicCard({
         title,
         subtitle,
         text,
-        image: image && new Image({ url: imageUrl, alt: image }),
+        image: imageUrl && new Image({ url: imageUrl, alt: image }),
         buttons: buttons.map(button => new Button(button)),
       }),
     );
@@ -302,5 +302,11 @@ export default class DialogflowConversation extends Conversation {
       capabilities.has(DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT) &&
       capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER)
     );
+  }
+  
+  private getImageUrl(image): string {
+    if (image.match(/^https?:\/\//)) return image;
+    
+    return `${this.storageUrl}images/${image}.png`;
   }
 }

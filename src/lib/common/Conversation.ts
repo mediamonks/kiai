@@ -20,7 +20,9 @@ export default abstract class Conversation {
     DEVICE_PRECISE_LOCATION: string;
     DEVICE_COARSE_LOCATION: string;
   };
-
+  
+  public abstract readonly TEXT_BUBBLE_LIMIT: Number;
+  
   public abstract readonly sessionData: TKeyValue;
 
   public abstract readonly userData: TKeyValue;
@@ -298,8 +300,17 @@ export default abstract class Conversation {
         return this.speak(sample(voices), speech);
       }
     }
+    
+    speech = speech.split('\b');
+    if (speech.length > this.TEXT_BUBBLE_LIMIT) {
+      throw new Error(`More than ${this.TEXT_BUBBLE_LIMIT} text bubbles are currently not supported.`);
+    }
+    
+    while (speech.length > 1) {
+      this.add(speech.shift()).respond();
+    }
 
-    return this.add(speech);
+    return this.add(speech.pop());
   }
 
   public next(intent: string, payload?: any): Conversation {

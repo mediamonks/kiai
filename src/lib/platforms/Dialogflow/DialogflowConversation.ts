@@ -30,6 +30,8 @@ export default class DialogflowConversation extends Conversation {
     SCREEN_OUTPUT: 'actions.capability.SCREEN_OUTPUT',
     WEB_BROWSER: 'actions.capability.WEB_BROWSER',
   };
+  
+  public readonly TEXT_BUBBLE_LIMIT: Number = 2;
 
   private conversationObject: GoogleDialogflowConversation;
 

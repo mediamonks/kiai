@@ -5,6 +5,7 @@
   "main": "./dist/Kiai.js",
   "scripts": {
     "dev": "npm run dev:ts",
+    "test": "echo 'Coming soon!'",
     "dev:ts": "tsc --watch",
     "build": "npm run build:ts",
     "build:ts": "tsc",

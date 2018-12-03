@@ -17,7 +17,7 @@ import {
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue } from '../../common/types';
-import App from 'Kiai';
+import App from '../../common/App';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {

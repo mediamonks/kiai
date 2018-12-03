@@ -13,6 +13,7 @@ import {
   Button,
   RegisterUpdate,
   RegisterUpdateOptions,
+  GoogleActionsV2UiElementsBasicCardImageDisplayOptions,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -180,12 +181,14 @@ export default class DialogflowConversation extends Conversation {
     text,
     image,
     buttons = [],
+    display = 'CROPPED',
   }: {
     title?: string;
     subtitle?: string;
     text?: string;
     image?: string;
     buttons?: { url: string; title: string }[];
+    display?: GoogleActionsV2UiElementsBasicCardImageDisplayOptions;
   }): Conversation {
     const imageUrl = image && `${this.storageUrl}images/${image}.png`;
 
@@ -196,6 +199,7 @@ export default class DialogflowConversation extends Conversation {
         text,
         image: image && new Image({ url: imageUrl, alt: image }),
         buttons: buttons.map(button => new Button(button)),
+        display,
       }),
     );
   }

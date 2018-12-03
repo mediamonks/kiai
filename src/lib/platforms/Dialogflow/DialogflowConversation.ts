@@ -175,7 +175,7 @@ export default class DialogflowConversation extends Conversation {
     return this.add(new RegisterUpdate({ ...options, intent }));
   }
 
-  public showCard({
+  public card({
     title,
     subtitle,
     text,

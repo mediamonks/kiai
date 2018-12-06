@@ -145,7 +145,11 @@ export default abstract class Conversation {
   protected get storageUrl(): string {
     return <string>(this.config.storage.rootUrl || '');
   }
-
+  
+  protected get voice(): string[] {
+    return this.config.voice[this.locale] || [];
+  }
+  
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -166,10 +170,6 @@ export default abstract class Conversation {
 
   private get dialog(): TKeyValue {
     return this.config.dialog[this.locale];
-  }
-
-  private get voice(): string[] {
-    return this.config.voice[this.locale] || [];
   }
 
   private get flows(): TFlows {
@@ -236,9 +236,7 @@ export default abstract class Conversation {
   ): Conversation;
 
   public abstract enableTimedNotification(options: any): Conversation;
-
-  protected abstract add(output: any): Conversation;
-
+  
   protected abstract sendResponse(): Conversation;
 
   public suggest(...suggestions: string[]): Conversation {
@@ -427,7 +425,12 @@ export default abstract class Conversation {
   public abstract hasDisplay(): boolean;
 
   public abstract hasBrowser(): boolean;
-
+  
+  protected add(output: any): Conversation {
+    this.output.push(output);
+    return this;
+  }
+  
   protected resolveIntent(intent: string): string {
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 

@@ -12,7 +12,7 @@ import {
   List,
   Button,
   RegisterUpdate,
-  RegisterUpdateOptions,
+  RegisterUpdateOptions, SimpleResponse,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -128,6 +128,10 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public speak(voice: string, text: string = ''): Conversation {
+    if (!this.voice.find(key => key === voice)) {
+      return this.add(new SimpleResponse({ speech: voice, text }));
+    }
+  
     return this.add(
       `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.voice}${
         this.locale
@@ -240,11 +244,6 @@ export default class DialogflowConversation extends Conversation {
     return this.conversationObject.surface.capabilities.has(
       DialogflowConversation.CAPABILITIES.WEB_BROWSER,
     );
-  }
-
-  protected add(output: any): Conversation {
-    this.output.push(output);
-    return this;
   }
 
   protected sendResponse(): DialogflowConversation {

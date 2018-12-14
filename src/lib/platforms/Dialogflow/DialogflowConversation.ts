@@ -208,11 +208,11 @@ export default class DialogflowConversation extends Conversation {
 
   public list(
     title: string,
-    items: { title: string; synonyms?: string[]; description?: string; imageUrl?: string }[],
+    items: { title: string; synonyms?: string[]; description?: string; imageUrl?: string, key?: string }[],
   ): Conversation {
     items = items.map(item => ({
       title: item.title,
-      optionInfo: { key: item.title, synonyms: item.synonyms },
+      optionInfo: { key: item.key || item.title, synonyms: item.synonyms },
       description: item.description,
       image: item.imageUrl && new Image({ url: item.imageUrl, alt: item.title }),
     }));

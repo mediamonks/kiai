@@ -232,7 +232,7 @@ export default abstract class Conversation {
 
   public abstract list(
     title: string,
-    items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string }[],
+    items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string, key?: string }[],
   ): Conversation;
 
   public abstract enableTimedNotification(options: any): Conversation;

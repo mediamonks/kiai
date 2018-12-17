@@ -12,7 +12,8 @@ import {
   List,
   Button,
   RegisterUpdate,
-  RegisterUpdateOptions, SimpleResponse,
+  RegisterUpdateOptions,
+  SimpleResponse,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -30,7 +31,7 @@ export default class DialogflowConversation extends Conversation {
     SCREEN_OUTPUT: 'actions.capability.SCREEN_OUTPUT',
     WEB_BROWSER: 'actions.capability.WEB_BROWSER',
   };
-  
+
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
 
   private conversationObject: GoogleDialogflowConversation;
@@ -131,7 +132,7 @@ export default class DialogflowConversation extends Conversation {
     if (!this.voice.find(key => key === voice)) {
       return this.add(new SimpleResponse({ speech: voice, text }));
     }
-  
+
     return this.add(
       `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.voice}${
         this.locale
@@ -194,7 +195,7 @@ export default class DialogflowConversation extends Conversation {
     buttons?: { url: string; title: string }[];
   }): Conversation {
     let imageUrl = this.getImageUrl(image);
-    
+
     return this.add(
       new BasicCard({
         title,
@@ -206,18 +207,21 @@ export default class DialogflowConversation extends Conversation {
     );
   }
 
-  public list(
-    title: string,
-    items: { title: string; synonyms?: string[]; description?: string; imageUrl?: string, key?: string }[],
-  ): Conversation {
-    items = items.map(item => ({
+  public list({
+    title,
+    items,
+  }: {
+    title?: string;
+    items: { title: string; synonyms?: string[]; description?: string; image?: string; key?: string }[];
+  }): Conversation {
+    const listItems = items.map(item => ({
       title: item.title,
       optionInfo: { key: item.key || item.title, synonyms: item.synonyms },
       description: item.description,
-      image: item.imageUrl && new Image({ url: item.imageUrl, alt: item.title }),
+      image: item.image && new Image({ url: this.getImageUrl(item.image), alt: item.title }),
     }));
 
-    return this.add(new List({ title, items }));
+    return this.add(new List({ title, items: listItems }));
   }
 
   public respond(): DialogflowConversation {
@@ -304,10 +308,10 @@ export default class DialogflowConversation extends Conversation {
       capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER)
     );
   }
-  
+
   private getImageUrl(image): string {
     if (image.match(/^https?:\/\//)) return image;
-    
+
     return `${this.storageUrl}images/${image}.png`;
   }
 }

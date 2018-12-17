@@ -20,9 +20,9 @@ export default abstract class Conversation {
     DEVICE_PRECISE_LOCATION: string;
     DEVICE_COARSE_LOCATION: string;
   };
-  
+
   public abstract readonly TEXT_BUBBLE_LIMIT: Number;
-  
+
   public abstract readonly sessionData: TKeyValue;
 
   public abstract readonly userData: TKeyValue;
@@ -145,11 +145,11 @@ export default abstract class Conversation {
   protected get storageUrl(): string {
     return <string>(this.config.storage.rootUrl || '');
   }
-  
+
   protected get voice(): string[] {
     return this.config.voice[this.locale] || [];
   }
-  
+
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -230,13 +230,13 @@ export default abstract class Conversation {
 
   public abstract respond(): Conversation;
 
-  public abstract list(
-    title: string,
-    items: { title: string; synonyms?: string[]; body?: string; imageUrl?: string, key?: string }[],
-  ): Conversation;
+  public abstract list(options: {
+    title?: string;
+    items: { title: string; synonyms?: string[]; description?: string; image?: string; key?: string }[];
+  }): Conversation;
 
   public abstract enableTimedNotification(options: any): Conversation;
-  
+
   protected abstract sendResponse(): Conversation;
 
   public suggest(...suggestions: string[]): Conversation {
@@ -298,12 +298,14 @@ export default abstract class Conversation {
         return this.speak(sample(voices), speech);
       }
     }
-    
+
     speech = speech.split('\b');
     if (speech.length > this.TEXT_BUBBLE_LIMIT) {
-      throw new Error(`More than ${this.TEXT_BUBBLE_LIMIT} text bubbles are currently not supported.`);
+      throw new Error(
+        `More than ${this.TEXT_BUBBLE_LIMIT} text bubbles are currently not supported.`,
+      );
     }
-    
+
     while (speech.length > 1) {
       this.add(speech.shift()).respond();
     }
@@ -425,12 +427,12 @@ export default abstract class Conversation {
   public abstract hasDisplay(): boolean;
 
   public abstract hasBrowser(): boolean;
-  
+
   protected add(output: any): Conversation {
     this.output.push(output);
     return this;
   }
-  
+
   protected resolveIntent(intent: string): string {
     let [flowName, intentName] = intent.split(App.INTENT_DELIMITER);
 

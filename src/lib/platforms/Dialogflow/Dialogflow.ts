@@ -25,7 +25,7 @@ export default class Dialogflow extends Platform {
 
     this.dialogflow = dialogflow({ clientId, debug });
 
-    this.conversation = new DialogflowConversation({ config });
+    this.conversation = new DialogflowConversation({ config, platform: this });
 
     this.registerFlows(config.flows);
 

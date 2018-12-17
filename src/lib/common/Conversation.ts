@@ -13,6 +13,7 @@ import {
   TTrackingDataCollector,
 } from './types';
 import Tracker from './Tracker';
+import Platform from './Platform';
 
 export default abstract class Conversation {
   public abstract readonly PERMISSIONS: {
@@ -34,6 +35,8 @@ export default abstract class Conversation {
   public location: any;
 
   public currentIntent: string;
+  
+  public platform: Platform;
 
   protected readonly config: TAppConfig;
 
@@ -51,8 +54,9 @@ export default abstract class Conversation {
 
   private tracker: Tracker;
 
-  public constructor({ config }: { config: TAppConfig }) {
+  public constructor({ config, platform }: { config: TAppConfig, platform: Platform }) {
     this.config = config;
+    this.platform = platform;
   }
 
   public get userId(): string {
@@ -234,9 +238,9 @@ export default abstract class Conversation {
     title?: string;
     items: { title: string; synonyms?: string[]; description?: string; image?: string; key?: string }[];
   }): Conversation;
-
-  public abstract enableTimedNotification(options: any): Conversation;
-
+  
+  public abstract enableDailyNotification(intent: string, payload?: TMapping): Conversation;
+  
   protected abstract sendResponse(): Conversation;
 
   public suggest(...suggestions: string[]): Conversation {

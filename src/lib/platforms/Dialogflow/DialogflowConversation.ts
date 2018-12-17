@@ -12,12 +12,11 @@ import {
   List,
   Button,
   RegisterUpdate,
-  RegisterUpdateOptions,
   SimpleResponse,
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
-import { TKeyValue } from '../../common/types';
+import { TKeyValue, TMapping } from '../../common/types';
 import App from '../../common/App';
 
 export default class DialogflowConversation extends Conversation {
@@ -173,12 +172,14 @@ export default class DialogflowConversation extends Conversation {
       }),
     ).expect('permission_confirmation');
   }
-
-  /** You also have to add the 'intentName' specified in @param options.
-   To the AoG Console and enable user engagement for it. */
-  public enableTimedNotification(options: RegisterUpdateOptions): Conversation {
-    const intent = options.intent.replace(App.INTENT_DELIMITER, '_');
-    return this.add(new RegisterUpdate({ ...options, intent }));
+  
+  public enableDailyNotification(intent: string, payload: TMapping = {}): Conversation {
+    const args = Object.keys(payload).map(name => ({
+      name,
+      textValue: payload[name],
+    }));
+    intent = intent.replace(App.INTENT_DELIMITER, this.platform.INTENT_DELIMITER);
+    return this.add(new RegisterUpdate({ intent, arguments: args, frequency: 'DAILY' }));
   }
 
   public showCard({

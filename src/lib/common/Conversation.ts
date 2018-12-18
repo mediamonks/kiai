@@ -434,12 +434,22 @@ export default abstract class Conversation {
           resolve();
         } else {
           const { handler, payload } = this.intentHandlers.shift();
-          Promise.resolve(handler(this, payload)).then(() => executeHandler());
+          Promise.resolve(handler(this, payload))
+            .then(() => executeHandler())
+            .catch(error => {
+              this.handleError(error);
+              resolve();
+            });
         }
       };
 
       setTimeout(executeHandler, 0);
     }).then(() => this.sendResponse());
+  }
+
+  public addHistory(flow: string, intent: string, user: boolean = false): Conversation {
+    this.history.push({ flow, intent, user });
+    return this;
   }
 
   public abstract hasDisplay(): boolean;
@@ -464,9 +474,10 @@ export default abstract class Conversation {
 
     return `${flowName}${App.INTENT_DELIMITER}${intentName}`;
   }
-  
-  public addHistory(flow: string, intent: string, user: boolean = false): Conversation {
-    this.history.push({ flow, intent, user });
+
+  private handleError(error: Error): Conversation {
+    this.say('error_*', { error: error.toString() });
+    console.error(error.toString());
     return this;
   }
 }

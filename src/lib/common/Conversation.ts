@@ -5,6 +5,7 @@ import App from './App';
 import {
   TAppConfig,
   TFlows,
+  THistoryItem,
   TIntentHandler,
   TKeyValue,
   TLocales,
@@ -35,7 +36,7 @@ export default abstract class Conversation {
   public location: any;
 
   public currentIntent: string;
-  
+
   public platform: Platform;
 
   protected readonly config: TAppConfig;
@@ -54,7 +55,7 @@ export default abstract class Conversation {
 
   private tracker: Tracker;
 
-  public constructor({ config, platform }: { config: TAppConfig, platform: Platform }) {
+  public constructor({ config, platform }: { config: TAppConfig; platform: Platform }) {
     this.config = config;
     this.platform = platform;
   }
@@ -99,6 +100,11 @@ export default abstract class Conversation {
 
   public get timesInputRepeated(): number {
     return <number>(this.sessionData.__timesInputRepeated || 0);
+  }
+
+  public get history(): THistoryItem[] {
+    this.sessionData.__history = this.sessionData.__history || [];
+    return <THistoryItem[]>(<any[]>this.sessionData.__history);
   }
 
   protected set context(context: string) {
@@ -236,11 +242,17 @@ export default abstract class Conversation {
 
   public abstract list(options: {
     title?: string;
-    items: { title: string; synonyms?: string[]; description?: string; image?: string; key?: string }[];
+    items: {
+      title: string;
+      synonyms?: string[];
+      description?: string;
+      image?: string;
+      key?: string;
+    }[];
   }): Conversation;
-  
+
   public abstract enableDailyNotification(intent: string, payload?: TMapping): Conversation;
-  
+
   protected abstract sendResponse(): Conversation;
 
   public suggest(...suggestions: string[]): Conversation {
@@ -331,6 +343,8 @@ export default abstract class Conversation {
     this.currentFlow = flowName;
     this.currentIntent = intentName;
 
+    this.addHistory(flowName, intentName, false);
+
     return this.addHandler(handler, payload);
   }
 
@@ -364,7 +378,7 @@ export default abstract class Conversation {
   }
 
   public pause(): Conversation {
-    this.add('\n  <break time=".5s"/>');
+    this.add('\n<break time=".5s"/>');
     return this;
   }
 
@@ -449,5 +463,10 @@ export default abstract class Conversation {
     }
 
     return `${flowName}${App.INTENT_DELIMITER}${intentName}`;
+  }
+  
+  public addHistory(flow: string, intent: string, user: boolean = false): Conversation {
+    this.history.push({ flow, intent, user });
+    return this;
   }
 }

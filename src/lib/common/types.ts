@@ -63,6 +63,8 @@ export type TAppConfig = {
 
 export type TSpeech = { key: string; params?: TMapping };
 
+export type THistoryItem = { flow: string, intent: string, user: boolean };
+
 export interface IPlatformConstructor {
   new (options: { config: TAppConfig }): Platform;
 }

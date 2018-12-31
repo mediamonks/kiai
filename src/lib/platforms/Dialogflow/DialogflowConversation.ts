@@ -195,7 +195,7 @@ export default class DialogflowConversation extends Conversation {
     image?: string;
     buttons?: { url: string; title: string }[];
   }): Conversation {
-    let imageUrl = this.getImageUrl(image);
+    let imageUrl = image && this.getImageUrl(image);
 
     return this.add(
       new BasicCard({

@@ -401,12 +401,13 @@ export default abstract class Conversation {
   }
 
   public track(event: string, data?: TKeyValue): Conversation {
-    this.tracker =
-      this.tracker || new Tracker({ config: this.config.tracking, userId: this.userId });
+    this.tracker = this.tracker || new Tracker(this.config.tracking);
+    
     let userData;
     if (typeof this.trackingDataCollector === 'function')
       userData = this.trackingDataCollector(this);
-    this.tracker.trackEvent({ event, data, userData });
+    
+    this.tracker.trackEvent({ userId: this.userId, event, data, userData });
 
     return this;
   }

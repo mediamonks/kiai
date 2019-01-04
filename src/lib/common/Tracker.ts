@@ -5,24 +5,22 @@ import * as ua from 'universal-analytics';
 
 export default class Tracker {
   private readonly amplitude: Amplitude;
-  private readonly ga: any;
-  private readonly userId: string;
+  private readonly gaTrackingId: string;
 
-  public constructor({ config, userId }: { config: TTrackingConfig; userId: string }) {
-    this.userId = userId;
-
+  public constructor(config: TTrackingConfig) {
     const amplitudeApiKey = get(config, 'amplitude.apiKey');
     if (amplitudeApiKey) this.amplitude = new Amplitude(amplitudeApiKey);
-
-    const gaTrackingId = get(config, 'googleAnalytics.trackingId');
-    if (gaTrackingId) this.ga = ua(gaTrackingId, userId, { strictCidFormat: false });
+  
+    this.gaTrackingId = get(config, 'googleAnalytics.trackingId');
   }
 
   public trackEvent({
+    userId,
     event,
     data = {},
     userData = {},
   }: {
+    userId: string;
     event: string;
     data?: TKeyValue;
     userData?: TKeyValue;
@@ -30,15 +28,17 @@ export default class Tracker {
     if (this.amplitude) {
       this.amplitude.track({
         eventType: event,
-        userId: this.userId,
+        userId,
         sessionId: Date.now(),
         eventProperties: data,
         userProperties: userData,
       });
     }
-
-    if (this.ga) {
-      this.ga.event({
+  
+    if (this.gaTrackingId) {
+      const ga = ua(this.gaTrackingId, userId, { strictCidFormat: false });
+    
+      ga.event({
         ec: data.category || '[unspecified]',
         ea: event,
         el: data.label || '',

@@ -382,7 +382,7 @@ export default abstract class Conversation {
     return this;
   }
 
-  public return(payload: TKeyValue): Conversation {
+  public return(payload?: TKeyValue): Conversation {
     const intentDirective = this.returnDirectives.pop();
 
     if (!intentDirective) throw new Error('Conversation.return() called but no return intent set.');

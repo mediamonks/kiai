@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "allowJs": true,
+    "declaration": true,
     "lib": ["es6"],
     "module": "commonjs",
     "target": "ES6",

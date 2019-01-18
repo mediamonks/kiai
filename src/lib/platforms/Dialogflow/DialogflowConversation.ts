@@ -1,7 +1,7 @@
 import {
   DialogflowConversation as GoogleDialogflowConversation,
   Image,
-  // SignIn,
+  SignIn,
   Suggestions,
   LinkOutSuggestion,
   Permission,
@@ -139,12 +139,10 @@ export default class DialogflowConversation extends Conversation {
     );
   }
 
-  /*
   login(callbackIntent: string, speech: string = ''): Conversation {
-    this.sessionData.__loginCallback = callbackIntent;
+    this.sessionData.__loginCallback = this.resolveIntent(callbackIntent);
     return this.add(new SignIn(speech));
   }
-*/
 
   /*
   event(event: string): DialogflowConversation {
@@ -172,13 +170,18 @@ export default class DialogflowConversation extends Conversation {
       }),
     ).expect('permission_confirmation');
   }
-  
+
   public enableDailyNotification(intent: string, payload: TMapping = {}): Conversation {
     const args = Object.keys(payload).map(name => ({
       name,
       textValue: payload[name],
     }));
-    intent = intent.replace(App.INTENT_DELIMITER, this.platform.INTENT_DELIMITER);
+
+    intent = this.resolveIntent(intent).replace(
+      App.INTENT_DELIMITER,
+      this.platform.INTENT_DELIMITER,
+    );
+
     return this.add(new RegisterUpdate({ intent, arguments: args, frequency: 'DAILY' }));
   }
 
@@ -213,7 +216,13 @@ export default class DialogflowConversation extends Conversation {
     items,
   }: {
     title?: string;
-    items: { title: string; synonyms?: string[]; description?: string; image?: string; key?: string }[];
+    items: {
+      title: string;
+      synonyms?: string[];
+      description?: string;
+      image?: string;
+      key?: string;
+    }[];
   }): Conversation {
     const listItems = items.map(item => ({
       title: item.title,

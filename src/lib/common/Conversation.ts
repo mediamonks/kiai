@@ -214,7 +214,7 @@ export default abstract class Conversation {
 
   public abstract speak(voice: string, text?: string): Conversation;
 
-  // public abstract login(speech?: string): void;
+  public abstract login(speech?: string): void;
 
   // public abstract event(event: string): Conversation;
 
@@ -402,11 +402,11 @@ export default abstract class Conversation {
 
   public track(event: string, data?: TKeyValue): Conversation {
     this.tracker = this.tracker || new Tracker(this.config.tracking);
-    
+
     let userData;
     if (typeof this.trackingDataCollector === 'function')
       userData = this.trackingDataCollector(this);
-    
+
     this.tracker.trackEvent({ userId: this.userId, event, data, userData });
 
     return this;

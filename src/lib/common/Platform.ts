@@ -47,13 +47,11 @@ export default abstract class Platform {
     });
   }
 
-  /* Unfinished feature
   protected registerLoginIntent(): void {
     this.registerIntent('login', conversation => {
-      conversation.handleLogin(conversation.input.status === 'OK');
+      conversation.handleLogin(conversation.input[0] === 'OK');
     });
   }
-*/
 
   protected registerFlows(flows: TFlows): void {
     Object.keys(flows).forEach(flowName => {

@@ -32,6 +32,8 @@ export default class Dialogflow extends Platform {
     this.registerConfirmationIntents('yes', 'no');
 
     this.registerPermissionIntents();
+    
+    this.registerLoginIntent();
   }
 
   public get requestHandler(): () => any {

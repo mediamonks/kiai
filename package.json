@@ -9,7 +9,7 @@
     "dev:ts": "tsc --watch",
     "build": "npm run build:ts",
     "build:ts": "tsc",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "dependencies": {
     "actions-on-google": "^2.4.1",

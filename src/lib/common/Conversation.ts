@@ -28,6 +28,8 @@ export default abstract class Conversation {
   public abstract readonly sessionData: TKeyValue;
 
   public abstract readonly userData: TKeyValue;
+  
+  public abstract readonly userProfile: TKeyValue;
 
   public params: TKeyValue;
 
@@ -159,6 +161,14 @@ export default abstract class Conversation {
   protected get voice(): string[] {
     return this.config.voice[this.locale] || [];
   }
+  
+  protected set loginCallback(callbackIntent: string) {
+    this.sessionData.__loginCallback = this.resolveIntent(callbackIntent);
+  }
+  
+  protected get loginCallback(): string {
+    return <string>(this.sessionData.__loginCallback || '');
+  }
 
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
@@ -171,11 +181,6 @@ export default abstract class Conversation {
   private get returnDirectives(): string[] {
     if (!this.sessionData.__callbacks) this.sessionData.__callbacks = <string[]>[];
     return <string[]>this.sessionData.__callbacks;
-  }
-
-  private get payloads(): any[] {
-    if (!this.sessionData.__payloads) this.sessionData.__payloads = <any[]>[];
-    return <any[]>this.sessionData.__payloads;
   }
 
   private get dialog(): TKeyValue {
@@ -214,8 +219,8 @@ export default abstract class Conversation {
 
   public abstract speak(voice: string, text?: string): Conversation;
 
-  public abstract login(speech?: string): void;
-
+  public abstract login(callbackIntent: string, speech?: string): Conversation;
+  
   // public abstract event(event: string): Conversation;
 
   public abstract showCard({
@@ -414,7 +419,6 @@ export default abstract class Conversation {
 
   public addHandler(handler: TIntentHandler, payload?: any): Conversation {
     this.intentHandlers.push({ handler, payload });
-    this.payloads.push(payload);
     return this;
   }
 
@@ -451,6 +455,10 @@ export default abstract class Conversation {
   public addHistory(flow: string, intent: string, user: boolean = false): Conversation {
     this.history.push({ flow, intent, user });
     return this;
+  }
+  
+  public handleLogin(wasSuccessful): Conversation {
+    return this.next(this.loginCallback, wasSuccessful);
   }
 
   public abstract hasDisplay(): boolean;

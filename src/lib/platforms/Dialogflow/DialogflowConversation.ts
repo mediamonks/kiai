@@ -46,6 +46,10 @@ export default class DialogflowConversation extends Conversation {
   public get userData(): TKeyValue {
     return this.conversationObject.user.storage;
   }
+  
+  public get userProfile(): TKeyValue {
+    return <TKeyValue><any>this.conversationObject.user.profile.payload;
+  }
 
   public setConversationObject(conversationObject: GoogleDialogflowConversation) {
     this.conversationObject = conversationObject;
@@ -139,8 +143,8 @@ export default class DialogflowConversation extends Conversation {
     );
   }
 
-  login(callbackIntent: string, speech: string = ''): Conversation {
-    this.sessionData.__loginCallback = this.resolveIntent(callbackIntent);
+  public login(callbackIntent: string, speech: string = ''): Conversation {
+    this.loginCallback = callbackIntent;
     return this.add(new SignIn(speech));
   }
 

@@ -33,7 +33,7 @@ export default abstract class Conversation {
 
   public params: TKeyValue;
 
-  public input: (string | boolean)[];
+  public input: any[];
 
   public location: any;
 
@@ -290,6 +290,7 @@ export default abstract class Conversation {
     let dialogVariants = Object.keys(this.dialog).filter(key => regex.test(key));
 
     let speech;
+    let voices;
     if (!dialogVariants.length) {
       speech = key;
     } else {
@@ -307,17 +308,18 @@ export default abstract class Conversation {
       }
 
       speech = this.dialog[dialogVariant];
+  
+      voices = this.voice.filter(key => new RegExp(`^${dialogVariant}_?[A-Z]`).test(key));
+    }
+    
+    if (params) {
+      Object.keys(params).forEach(key => {
+        speech = speech.replace(`{${key}}`, params[key]);
+      });
+    }
 
-      if (params) {
-        Object.keys(params).forEach(key => {
-          speech = speech.replace(`{${key}}`, params[key]);
-        });
-      }
-
-      const voices = this.voice.filter(key => new RegExp(`^${dialogVariant}_?[A-Z]`).test(key));
-      if (voices.length) {
-        return this.speak(sample(voices), speech);
-      }
+    if (voices && voices.length) {
+      return this.speak(sample(voices), speech);
     }
 
     speech = speech.split('\b');

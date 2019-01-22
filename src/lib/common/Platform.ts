@@ -49,7 +49,7 @@ export default abstract class Platform {
 
   protected registerLoginIntent(): void {
     this.registerIntent('login', conversation => {
-      conversation.handleLogin(conversation.input[0] === 'OK');
+      conversation.handleLogin(conversation.input[0].status === 'OK');
     });
   }
 

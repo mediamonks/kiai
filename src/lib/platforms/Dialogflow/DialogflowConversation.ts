@@ -263,6 +263,14 @@ export default class DialogflowConversation extends Conversation {
       DialogflowConversation.CAPABILITIES.WEB_BROWSER,
     );
   }
+  
+  public canLinkOut(): boolean {
+    const capabilities = this.conversationObject.surface.capabilities;
+    return (
+      capabilities.has(DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT) &&
+      capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER)
+    );
+  }
 
   protected sendResponse(): DialogflowConversation {
     if (this.context) this.conversationObject.contexts.set(this.context, 999);
@@ -313,14 +321,6 @@ export default class DialogflowConversation extends Conversation {
     }
 
     return this;
-  }
-
-  private canLinkOut(): boolean {
-    const capabilities = this.conversationObject.surface.capabilities;
-    return (
-      capabilities.has(DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT) &&
-      capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER)
-    );
   }
 
   private getImageUrl(image): string {

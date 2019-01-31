@@ -58,8 +58,8 @@ export default class App {
     return platform;
   }
 
-  public setFramework(Framework: IFrameworkConstructor): IFramework {
-    this._framework = new Framework(this);
+  public setFramework(Framework: IFrameworkConstructor, options: TConfig): IFramework {
+    this._framework = new Framework(this, options);
     return this._framework;
   }
 }

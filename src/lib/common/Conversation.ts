@@ -28,7 +28,7 @@ export default abstract class Conversation {
   public abstract readonly sessionData: TKeyValue;
 
   public abstract readonly userData: TKeyValue;
-  
+
   public abstract readonly userProfile: TKeyValue;
 
   public params: TKeyValue;
@@ -161,11 +161,11 @@ export default abstract class Conversation {
   protected get voice(): string[] {
     return this.config.voice[this.locale] || [];
   }
-  
+
   protected set loginCallback(callbackIntent: string) {
     this.sessionData.__loginCallback = this.resolveIntent(callbackIntent);
   }
-  
+
   protected get loginCallback(): string {
     return <string>(this.sessionData.__loginCallback || '');
   }
@@ -198,6 +198,8 @@ export default abstract class Conversation {
   private get trackingDataCollector(): TTrackingDataCollector {
     return this.config.tracking.dataCollector;
   }
+  
+  public abstract canLinkOut(): boolean;
 
   public abstract show(image: string, alt?: string): Conversation;
 
@@ -220,7 +222,7 @@ export default abstract class Conversation {
   public abstract speak(voice: string, text?: string): Conversation;
 
   public abstract login(callbackIntent: string, speech?: string): Conversation;
-  
+
   // public abstract event(event: string): Conversation;
 
   public abstract showCard({
@@ -269,7 +271,9 @@ export default abstract class Conversation {
     let msgSrc = get(this.locales[this.locale], path);
 
     if (!msgSrc) {
-      console.warn(`Translation not defined for language "${this.locale}", path "${path}"`);
+      // if it contains anything other than lowercase letters, digits and underscores, it's probably not a key, so we don't show a warning
+      if (!path.match(/^[\w\d]+$/))
+        console.warn(`Translation not defined for language "${this.locale}", path "${path}"`);
       return path;
     }
 
@@ -308,10 +312,10 @@ export default abstract class Conversation {
       }
 
       speech = this.dialog[dialogVariant];
-  
+
       voices = this.voice.filter(key => new RegExp(`^${dialogVariant}_?[A-Z]`).test(key));
     }
-    
+
     if (params) {
       Object.keys(params).forEach(key => {
         speech = speech.replace(`{${key}}`, params[key]);
@@ -458,7 +462,7 @@ export default abstract class Conversation {
     this.history.push({ flow, intent, user });
     return this;
   }
-  
+
   public handleLogin(wasSuccessful): Conversation {
     return this.next(this.loginCallback, wasSuccessful);
   }

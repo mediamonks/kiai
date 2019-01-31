@@ -1,5 +1,5 @@
 import App from './App';
-import { TRequestHandler } from './types';
+import { TConfig, TRequestHandler } from './types';
 
 export default interface IFramework {
   use(name: string, handler: TRequestHandler): void;
@@ -7,7 +7,7 @@ export default interface IFramework {
 }
 
 export interface IFrameworkConstructor {
-  new (app: App): IFramework;
+  new (app: App, options: TConfig): IFramework;
 }
 
 declare var IFramework: IFrameworkConstructor;

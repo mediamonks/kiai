@@ -9,7 +9,7 @@ export default class Express implements IFramework {
   
   public endpoints = [];
 
-  public constructor(app: App, { port = parseInt(process.env.PORT, 10) }: { port: number }) {
+  public constructor(app: App, { port = parseInt(process.env.PORT, 10) }: { port?: number } = {}) {
     this.express = express();
 
     this.express.use(bodyParser.json());

@@ -2,7 +2,7 @@ import Conversation from './Conversation';
 import Platform from './Platform';
 
 export type TKeyValue = {
-  [key: string]: string | string[] | number | number[] | TKeyValue | TKeyValue[];
+  [key: string]: string | string[] | number | number[] | TKeyValue | TKeyValue[] | boolean | boolean[];
 };
 
 export type TMapping = { [key: string]: string };

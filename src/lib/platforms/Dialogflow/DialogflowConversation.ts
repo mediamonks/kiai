@@ -32,6 +32,12 @@ export default class DialogflowConversation extends Conversation {
   };
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
+  
+  private static DEFAULT_EXTENSION: TMapping = {
+    sfx: 'mp3',
+    image: 'png',
+    voice: 'wav',
+  };
 
   private conversationObject: GoogleDialogflowConversation;
 
@@ -126,20 +132,18 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public play(sound: string, fallback: string = ''): Conversation {
-    const path = `${this.config.storage.rootUrl}${this.config.storage.paths.sfx}`;
-    const extension = get(this.config, ['sfx', 'extension'], 'mp3');
-    return this.add(`<audio src="${path}${sound}.${extension}">${fallback}</audio>`);
+    return this.add(`<audio src="${this.getAssetUrl('sfx', sound)}">${fallback}</audio>`);
   }
 
   public speak(voice: string, text: string = ''): Conversation {
     if (!this.voice.find(key => key === voice)) {
       return this.add(new SimpleResponse({ speech: voice, text }));
     }
+    
+    const fileName = `${this.locale}/${voice}`;
 
     return this.add(
-      `<audio src="${this.config.storage.rootUrl}${this.config.storage.paths.voice}${
-        this.locale
-      }/${voice}.wav">${text}</audio>`,
+      `<audio src="${this.getAssetUrl('sfx', fileName)}">${text}</audio>`,
     );
   }
 
@@ -322,10 +326,15 @@ export default class DialogflowConversation extends Conversation {
 
     return this;
   }
+  
+  private getAssetUrl(type: string, asset: string): string {
+    const path = get(this.config.storage, ['paths', type], `${type}/`);
+    const extension = get(this.config.storage, ['extensions', type], DialogflowConversation.DEFAULT_EXTENSION[type]);
+    return `${this.storageUrl}${path}${asset}.${extension}`;
+  }
 
   private getImageUrl(image): string {
     if (image.match(/^https?:\/\//)) return image;
-
-    return `${this.storageUrl}images/${image}.png`;
+    return this.getAssetUrl('images', image);
   }
 }

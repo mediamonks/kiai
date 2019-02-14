@@ -492,7 +492,7 @@ export default abstract class Conversation {
 
   private handleError(error: Error): Conversation {
     this.say('error_*', { error: error.toString() });
-    console.error(error.toString());
+    console.error(error.stack);
     return this;
   }
 }

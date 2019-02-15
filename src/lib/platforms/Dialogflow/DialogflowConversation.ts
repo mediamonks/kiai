@@ -303,6 +303,9 @@ export default class DialogflowConversation extends Conversation {
 
     this.previousSpeech = this.lastSpeech;
     this.lastSpeech = { key: '' };
+    
+    // TODO temporary measure to solve undefined suggestions causing crash
+    this.suggestions = this.suggestions.filter(suggestion => typeof suggestion === 'string');
 
     this.previousSuggestions = this.suggestions;
     if (this.suggestions.length) {

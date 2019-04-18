@@ -7,7 +7,7 @@ export type TKeyValue = {
 
 export type TMapping = { [key: string]: string };
 
-export type TConfig = { [key: string]: string | number | TConfig };
+export type TConfig = { [key: string]: string | number | boolean | TConfig };
 
 export type TRequestHandler = (req: any, res: any) => void;
 
@@ -59,6 +59,7 @@ export type TAppConfig = {
   sfx?: {
     extension?: string;
   };
+  guiUrl?: string;
 };
 
 export type TSpeech = { key: string; params?: TMapping };
@@ -68,3 +69,5 @@ export type THistoryItem = { flow: string, intent: string, user: boolean };
 export interface IPlatformConstructor {
   new (options: { config: TAppConfig }): Platform;
 }
+
+export type TImmersiveResponse = { updatedState: { fields: TKeyValue }, loadImmersiveUrl?: string };

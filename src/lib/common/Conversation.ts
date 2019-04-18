@@ -40,6 +40,10 @@ export default abstract class Conversation {
   public currentIntent: string;
 
   public platform: Platform;
+  
+  public noInput: boolean = false;
+  
+  public scene: any;
 
   protected readonly config: TAppConfig;
 

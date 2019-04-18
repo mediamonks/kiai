@@ -51,10 +51,10 @@ export default class Dialogflow extends Platform {
       this.conversation.params = params || {};
       this.conversation.input = input || [];
       this.conversation.location = conversation.device.location;
+      this.conversation.noInput = !!conversation.arguments.get('REPROMPT_COUNT');
+      delete this.conversation.scene;
 
-      const noInput = !!conversation.arguments.get('REPROMPT_COUNT');
-
-      if (intent.isFallback || noInput) {
+      if (intent.isFallback || this.conversation.noInput) {
         this.conversation.repromptCount++;
       } else {
         this.conversation.timesInputRepeated = this.conversation.repromptCount;

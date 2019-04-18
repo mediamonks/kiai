@@ -16,7 +16,7 @@ import {
 } from 'actions-on-google';
 import { sample, range, without, get } from 'lodash';
 import Conversation from '../../common/Conversation';
-import { TKeyValue, TMapping } from '../../common/types';
+import { TKeyValue, TMapping, TImmersiveResponse } from '../../common/types';
 import App from '../../common/App';
 
 export default class DialogflowConversation extends Conversation {
@@ -32,7 +32,7 @@ export default class DialogflowConversation extends Conversation {
   };
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
-  
+
   private static DEFAULT_EXTENSION: TMapping = {
     sfx: 'mp3',
     image: 'png',
@@ -52,11 +52,19 @@ export default class DialogflowConversation extends Conversation {
   public get userData(): TKeyValue {
     return this.conversationObject.user.storage;
   }
-  
-  public get userProfile(): TKeyValue {
-    return <TKeyValue><any>this.conversationObject.user.profile.payload;
-  }
 
+  public get userProfile(): TKeyValue {
+    return <TKeyValue>(<any>this.conversationObject.user.profile.payload);
+  }
+  
+  private set immersiveUrlSent(hasBeenSent: boolean) {
+    this.sessionData.__immersiveUrlSent = hasBeenSent;
+  }
+  
+  private get immersiveUrlSent(): boolean {
+    return <boolean>(this.sessionData.__immersiveUrlSent || false);
+  }
+  
   public setConversationObject(conversationObject: GoogleDialogflowConversation) {
     this.conversationObject = conversationObject;
   }
@@ -139,12 +147,10 @@ export default class DialogflowConversation extends Conversation {
     if (!this.voice.find(key => key === voice)) {
       return this.add(new SimpleResponse({ speech: voice, text }));
     }
-    
+
     const fileName = `${this.locale}/${voice}`;
 
-    return this.add(
-      `<audio src="${this.getAssetUrl('sfx', fileName)}">${text}</audio>`,
-    );
+    return this.add(`<audio src="${this.getAssetUrl('sfx', fileName)}">${text}</audio>`);
   }
 
   public login(callbackIntent: string, speech: string = ''): Conversation {
@@ -267,7 +273,7 @@ export default class DialogflowConversation extends Conversation {
       DialogflowConversation.CAPABILITIES.WEB_BROWSER,
     );
   }
-  
+
   public canLinkOut(): boolean {
     const capabilities = this.conversationObject.surface.capabilities;
     return (
@@ -284,38 +290,60 @@ export default class DialogflowConversation extends Conversation {
       this.conversationObject.contexts.delete(this.previousContext.toLowerCase());
     }
 
-    this.respond();
-
-    const imagesAndCards = this.responses.filter(
-      response => response instanceof Image || response instanceof BasicCard,
-    );
-    if (imagesAndCards.length > 1) {
-      console.warn('Only 1 image or card per response allowed. Only the last image will be shown.');
-      imagesAndCards.pop();
-      this.responses = without(this.responses, ...imagesAndCards);
-    }
-
-    this.responses.forEach(item => {
-      this.conversationObject.add(item);
-    });
-
-    this.responses = [];
-
-    this.previousSpeech = this.lastSpeech;
-    this.lastSpeech = { key: '' };
-    
     // TODO temporary measure to solve undefined suggestions causing crash
     this.suggestions = this.suggestions.filter(suggestion => typeof suggestion === 'string');
 
     this.previousSuggestions = this.suggestions;
+
     if (this.suggestions.length) {
-      this.conversationObject.add(
+      this.add(
         new Suggestions(
           this.suggestions.map(suggestion => this.translate(suggestion).substring(0, 25)),
         ),
       );
       this.suggestions = [];
     }
+
+    this.respond();
+
+    if (this.config.guiUrl) {
+      const simpleResponses = this.responses.filter(response => typeof response === 'string');
+
+      if (this.responses.length > simpleResponses.length) {
+        console.warn('Rich responses are ignored when using ImmersiveResponse (guiUrl).');
+      }
+
+      const immersiveResponse: TImmersiveResponse = {
+        updatedState: {
+          fields: { userData: this.userData, sessionData: this.sessionData, ssml: simpleResponses, scene: this.scene },
+        },
+      };
+
+      if (!this.immersiveUrlSent) immersiveResponse.loadImmersiveUrl = this.config.guiUrl;
+
+      this.immersiveUrlSent = true;
+
+      this.responses = [{ immersiveResponse }];
+    } else {
+      const imagesAndCards = this.responses.filter(
+        response => response instanceof Image || response instanceof BasicCard,
+      );
+
+      if (imagesAndCards.length > 1) {
+        console.warn(
+          'Only 1 image or card per response allowed. Only the last image will be shown.',
+        );
+        imagesAndCards.pop();
+        this.responses = without(this.responses, ...imagesAndCards);
+      }
+    }
+
+    this.conversationObject.add(...this.responses);
+
+    this.responses = [];
+
+    this.previousSpeech = this.lastSpeech;
+    this.lastSpeech = { key: '' };
 
     if (this.endConversation) {
       this.conversationObject.close();
@@ -329,10 +357,14 @@ export default class DialogflowConversation extends Conversation {
 
     return this;
   }
-  
+
   private getAssetUrl(type: string, asset: string): string {
     const path = get(this.config.storage, ['paths', type], `${type}/`);
-    const extension = get(this.config.storage, ['extensions', type], DialogflowConversation.DEFAULT_EXTENSION[type]);
+    const extension = get(
+      this.config.storage,
+      ['extensions', type],
+      DialogflowConversation.DEFAULT_EXTENSION[type],
+    );
     return `${this.storageUrl}${path}${asset}.${extension}`;
   }
 

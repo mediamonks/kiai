@@ -283,12 +283,7 @@ export default class DialogflowConversation extends Conversation {
   }
 
   protected sendResponse(): DialogflowConversation {
-    if (this.context) this.conversationObject.contexts.set(this.context, 999);
-
-    if (this.previousContext && this.previousContext !== this.context) {
-      this.conversationObject.contexts.delete(this.previousContext);
-      this.conversationObject.contexts.delete(this.previousContext.toLowerCase());
-    }
+    this.conversationObject.contexts.output = { [this.context]: { lifespan: 99 } };
 
     // TODO temporary measure to solve undefined suggestions causing crash
     this.suggestions = this.suggestions.filter(suggestion => typeof suggestion === 'string');

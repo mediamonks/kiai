@@ -301,24 +301,24 @@ export default class DialogflowConversation extends Conversation {
 
     this.respond();
 
-    if (this.config.guiUrl) {
+    if (this.config.viewUrl) {
       const simpleResponses = this.responses.filter(response => typeof response === 'string');
 
       if (this.responses.length > simpleResponses.length) {
-        console.warn('Rich responses are ignored when using ImmersiveResponse (guiUrl).');
+        console.warn('Rich responses are ignored when using ImmersiveResponse (viewUrl).');
       }
 
       const immersiveResponse: TImmersiveResponse = {
         updatedState: {
-          fields: { userData: this.userData, sessionData: this.sessionData, ssml: simpleResponses, scene: this.scene },
+          fields: { userData: this.userData, sessionData: this.sessionData, scene: this.scene },
         },
       };
 
-      if (!this.immersiveUrlSent) immersiveResponse.loadImmersiveUrl = this.config.guiUrl;
+      if (!this.immersiveUrlSent) immersiveResponse.loadImmersiveUrl = this.config.viewUrl;
 
       this.immersiveUrlSent = true;
 
-      this.responses = [{ immersiveResponse }];
+      this.responses = [{ immersiveResponse, ...simpleResponses }];
     } else {
       const imagesAndCards = this.responses.filter(
         response => response instanceof Image || response instanceof BasicCard,

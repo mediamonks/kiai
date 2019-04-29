@@ -59,7 +59,7 @@ export type TAppConfig = {
   sfx?: {
     extension?: string;
   };
-  guiUrl?: string;
+  viewUrl?: string;
 };
 
 export type TSpeech = { key: string; params?: TMapping };

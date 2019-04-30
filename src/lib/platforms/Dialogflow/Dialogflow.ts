@@ -3,6 +3,8 @@ import DialogflowConversation from './DialogflowConversation';
 import Platform from '../../common/Platform';
 import { TAppConfig, TIntentHandler, TKeyValue } from '../../common/types';
 
+const VERSION = require('../../../../package.json').version;
+
 export default class Dialogflow extends Platform {
   private readonly dialogflow: any;
 
@@ -47,6 +49,7 @@ export default class Dialogflow extends Platform {
       const intent = conversation.body.queryResult.intent;
 
       this.conversation.setConversationObject(conversation);
+      this.conversation.version = VERSION;
       this.conversation.locale = this.mapLocale(conversation.user.locale);
       this.conversation.params = params || {};
       this.conversation.input = input || [];

@@ -112,6 +112,10 @@ export default abstract class Conversation {
     this.sessionData.__history = this.sessionData.__history || [];
     return <THistoryItem[]>(<any[]>this.sessionData.__history);
   }
+  
+  public set version(version: string) {
+    this.sessionData.__version = version;
+  }
 
   protected set context(context: string) {
     this.sessionData.__context = context;

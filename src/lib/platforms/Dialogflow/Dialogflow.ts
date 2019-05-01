@@ -57,17 +57,18 @@ export default class Dialogflow extends Platform {
       this.conversation.noInput = !!conversation.arguments.get('REPROMPT_COUNT');
       delete this.conversation.scene;
 
+      const [flowName, intentName] = intent.displayName.split(this.INTENT_DELIMITER);
+      
       if (intent.isFallback || this.conversation.noInput) {
         this.conversation.repromptCount++;
       } else {
         this.conversation.timesInputRepeated = this.conversation.repromptCount;
         this.conversation.repromptCount = 0;
-        this.conversation.resetContext();
-        const [flowName, intentName] = intent.displayName.split(this.INTENT_DELIMITER);
+        this.conversation.clearContext();
         this.conversation.currentFlow = flowName;
         this.conversation.currentIntent = intentName;
-        this.conversation.addHistory(flowName, intentName, true);
       }
+      this.conversation.addHistory(flowName, intentName, true);
       
       this.conversation.addHandler(handler);
 

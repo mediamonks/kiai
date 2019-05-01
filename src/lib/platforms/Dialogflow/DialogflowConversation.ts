@@ -69,7 +69,7 @@ export default class DialogflowConversation extends Conversation {
     this.conversationObject = conversationObject;
   }
 
-  public resetContext(): DialogflowConversation {
+  public clearContext(): DialogflowConversation {
     this.previousContext = this.context;
     this.context = '';
 
@@ -283,7 +283,7 @@ export default class DialogflowConversation extends Conversation {
   }
 
   protected sendResponse(): DialogflowConversation {
-    this.conversationObject.contexts.output = this.context ? { [this.context]: { lifespan: 99 } } : {};
+    this.conversationObject.contexts.output = this.context ? { [this.context]: { lifespan: 1 } } : {};
 
     // TODO temporary measure to solve undefined suggestions causing crash
     this.suggestions = this.suggestions.filter(suggestion => typeof suggestion === 'string');

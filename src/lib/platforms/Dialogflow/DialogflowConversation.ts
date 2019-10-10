@@ -150,7 +150,7 @@ export default class DialogflowConversation extends Conversation {
 
     const fileName = `${this.locale}/${voice}`;
 
-    return this.add(`<audio src="${this.getAssetUrl('sfx', fileName)}">${text}</audio>`);
+    return this.add(`<audio src="${this.getAssetUrl('voice', fileName)}">${text}</audio>`);
   }
 
   public login(callbackIntent: string, speech: string = ''): Conversation {

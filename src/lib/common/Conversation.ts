@@ -392,7 +392,11 @@ export default abstract class Conversation {
 
   public repeat(): Conversation {
     if (this.previousSpeech.key) this.say(this.previousSpeech.key, this.previousSpeech.params);
-    this.suggest(...this.previousSuggestions);
+    
+    this
+      .suggest(...this.previousSuggestions)
+      .expect(this.context);
+    
     return this;
   }
 

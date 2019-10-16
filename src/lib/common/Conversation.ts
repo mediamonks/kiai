@@ -400,8 +400,8 @@ export default abstract class Conversation {
     return this;
   }
 
-  public pause(): Conversation {
-    this.add('\n<break time=".5s"/>');
+  public pause(seconds: number = 0.5): Conversation {
+    this.add(`\n<break time="${seconds}s"/>`);
     return this;
   }
 

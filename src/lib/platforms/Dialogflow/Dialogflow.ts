@@ -64,7 +64,6 @@ export default class Dialogflow extends Platform {
       } else {
         this.conversation.timesInputRepeated = this.conversation.repromptCount;
         this.conversation.repromptCount = 0;
-        this.conversation.clearContext();
         this.conversation.currentFlow = flowName;
         this.conversation.currentIntent = intentName;
       }

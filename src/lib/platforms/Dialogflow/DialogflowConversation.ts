@@ -69,13 +69,6 @@ export default class DialogflowConversation extends Conversation {
     this.conversationObject = conversationObject;
   }
 
-  public clearContext(): DialogflowConversation {
-    this.previousContext = this.context;
-    this.context = '';
-
-    return this;
-  }
-
   public show(image: string, alt: string = image): Conversation {
     const wildcard = /\{(\d+)\}/;
     const matches = image.match(wildcard);
@@ -284,6 +277,9 @@ export default class DialogflowConversation extends Conversation {
 
   protected sendResponse(): DialogflowConversation {
     this.conversationObject.contexts.output = this.context ? { [this.context]: { lifespan: 1 } } : {};
+    
+    this.previousContext = this.context;
+    this.context = '';
 
     // TODO temporary measure to solve undefined suggestions causing crash
     this.suggestions = this.suggestions.filter(suggestion => typeof suggestion === 'string');

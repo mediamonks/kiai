@@ -395,7 +395,7 @@ export default abstract class Conversation {
     
     this
       .suggest(...this.previousSuggestions)
-      .expect(this.context);
+      .expect(this.previousContext);
     
     return this;
   }

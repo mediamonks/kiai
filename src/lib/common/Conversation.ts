@@ -293,7 +293,7 @@ export default abstract class Conversation {
     return msg({ ...params });
   }
 
-  public say(key: string, params?: TMapping): Conversation {
+  public say(key: string, params?: TMapping | string[]): Conversation {
     key = String(key);
 
     this.lastSpeech = { key, params };

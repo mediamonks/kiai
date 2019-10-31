@@ -62,7 +62,7 @@ export type TAppConfig = {
   viewUrl?: string;
 };
 
-export type TSpeech = { key: string; params?: TMapping };
+export type TSpeech = { key: string; params?: TMapping | string[] };
 
 export type THistoryItem = { flow: string, intent: string, user: boolean };
 

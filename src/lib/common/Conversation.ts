@@ -192,7 +192,7 @@ export default abstract class Conversation {
   }
 
   private get dialog(): TKeyValue {
-    return this.config.dialog[this.locale];
+    return this.config.dialog[this.locale] || {};
   }
 
   private get flows(): TFlows {

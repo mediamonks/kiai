@@ -133,7 +133,7 @@ export default abstract class Conversation {
     return <string>this.sessionData.__previousContext;
   }
 
-  protected set previousSpeech(speech: { key: string; params?: TMapping }) {
+  protected set previousSpeech(speech: TSpeech) {
     this.sessionData.__lastSpeech = speech;
   }
 

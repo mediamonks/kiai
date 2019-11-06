@@ -56,15 +56,15 @@ export default class DialogflowConversation extends Conversation {
   public get userProfile(): TKeyValue {
     return <TKeyValue>(<any>this.conversationObject.user.profile.payload);
   }
-  
+
   private set immersiveUrlSent(hasBeenSent: boolean) {
     this.sessionData.__immersiveUrlSent = hasBeenSent;
   }
-  
+
   private get immersiveUrlSent(): boolean {
     return <boolean>(this.sessionData.__immersiveUrlSent || false);
   }
-  
+
   public setConversationObject(conversationObject: GoogleDialogflowConversation) {
     this.conversationObject = conversationObject;
   }
@@ -162,6 +162,7 @@ export default class DialogflowConversation extends Conversation {
     permissions: string[] | string,
     deniedIntent: string,
     text?: string,
+    extra?: TKeyValue,
   ): Conversation {
     if (typeof permissions === 'string') permissions = [permissions];
 
@@ -174,8 +175,15 @@ export default class DialogflowConversation extends Conversation {
       new Permission({
         context: text,
         permissions: permissions as GoogleActionsV2PermissionValueSpecPermissions[],
+        extra,
       }),
     ).expect('permission_confirmation');
+  }
+
+  public requestNotificationPermission(intent: string, deniedIntent: string, text?: string, payload: TKeyValue = {}) {
+    return this.requestPermission('UPDATE', deniedIntent, text, {
+      updatePermissionValueSpec: { intent, arguments: [ payload ] },
+    });
   }
 
   public enableDailyNotification(intent: string, payload: TMapping = {}): Conversation {
@@ -276,8 +284,10 @@ export default class DialogflowConversation extends Conversation {
   }
 
   protected sendResponse(): DialogflowConversation {
-    this.conversationObject.contexts.output = this.context ? { [this.context]: { lifespan: 1 } } : {};
-    
+    this.conversationObject.contexts.output = this.context
+      ? { [this.context]: { lifespan: 1 } }
+      : {};
+
     this.previousContext = this.context;
     this.context = '';
 

@@ -251,8 +251,16 @@ export default abstract class Conversation {
     permissions: string[] | string,
     deniedIntent: string,
     text?: string,
+    extra?: TKeyValue
   ): Conversation;
-
+  
+  public abstract requestNotificationPermission(
+    intent: string,
+    deniedIntent: string,
+    text?: string,
+    payload?: TKeyValue
+  ): Conversation
+  
   public abstract respond(): Conversation;
 
   public abstract list(options: {
@@ -275,7 +283,7 @@ export default abstract class Conversation {
     return this;
   }
 
-  public translate(path: string, params: string[] = []): string {
+  public translate(path: string, params?: TMapping | string[]): string {
     let msgSrc = get(this.locales[this.locale], path);
 
     if (!msgSrc) {

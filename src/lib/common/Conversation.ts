@@ -178,6 +178,14 @@ export default abstract class Conversation {
     return <string>(this.sessionData.__loginCallback || '');
   }
 
+  protected get updateRegistrationCallback(): string {
+    return <string>(this.sessionData.__updateRegistrationCallback || '');
+  }
+
+  protected set updateRegistrationCallback(callbackIntent: string) {
+    this.sessionData.__updateRegistrationCallback = this.resolveIntent(callbackIntent);
+  }
+
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -212,6 +220,10 @@ export default abstract class Conversation {
   public abstract show(image: string, alt?: string): Conversation;
 
   public abstract canTransfer(...capabilities: any[]): boolean;
+
+  public abstract transferToMobile(description: string): Conversation;
+
+  public abstract transfer(...capabilities: any[]): Conversation;
 
   public abstract canRedirect(): boolean;
 
@@ -274,7 +286,7 @@ export default abstract class Conversation {
     }[];
   }): Conversation;
 
-  public abstract enableDailyNotification(intent: string, payload?: TMapping): Conversation;
+  public abstract enableDailyNotification(intent: string, callbackIntent: string, payload?: TMapping): Conversation;
 
   protected abstract sendResponse(): Conversation;
 
@@ -455,7 +467,7 @@ export default abstract class Conversation {
   }
 
   public handlePermission(granted: boolean): Conversation {
-    return this.next(this.permissionCallbacks[+!granted]);
+    return this.next(this.permissionCallbacks[+!granted], granted);
   }
 
   public handleIntent(): Promise<any> {
@@ -483,8 +495,12 @@ export default abstract class Conversation {
     return this;
   }
 
-  public handleLogin(wasSuccessful): Conversation {
+  public handleLogin(wasSuccessful: boolean): Conversation {
     return this.next(this.loginCallback, wasSuccessful);
+  }
+
+  public handleUpdateRegistration(confirmed: boolean): Conversation {
+    return this.next(this.updateRegistrationCallback, confirmed);
   }
 
   public abstract hasDisplay(): boolean;

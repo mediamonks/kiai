@@ -60,6 +60,12 @@ export default abstract class Platform {
     });
   }
 
+  protected registerUpdateIntent(): void {
+    this.registerIntent('notification_confirm', conversation => {
+      conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
+    });
+  }
+
   protected mapLocale(locale: string): string {
     Object.keys(this.localeMapping).find(key => {
       const match = new RegExp(key).test(locale);

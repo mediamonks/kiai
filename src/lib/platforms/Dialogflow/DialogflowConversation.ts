@@ -117,19 +117,30 @@ export default class DialogflowConversation extends Conversation {
         DialogflowConversation.CAPABILITIES.WEB_BROWSER,
       )
     ) {
-      return this.add(
-        new NewSurface({
-          context: description,
-          notification: description,
-          capabilities: [
-            DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
-            DialogflowConversation.CAPABILITIES.WEB_BROWSER,
-          ],
-        }),
-      );
+      return this.transfer([
+        DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
+        DialogflowConversation.CAPABILITIES.WEB_BROWSER
+      ], description);
     }
 
     return this;
+  }
+
+  public transferToMobile(description: string): Conversation {
+    return this.transfer([
+      DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
+      DialogflowConversation.CAPABILITIES.WEB_BROWSER,
+    ], description);
+  }
+
+  public transfer(capabilities: SurfaceCapability[], description: string): Conversation {
+    return this.add(
+      new NewSurface({
+        context: description,
+        notification: description,
+        capabilities,
+      })
+    );
   }
 
   public play(sound: string, fallback: string = ''): Conversation {
@@ -186,7 +197,7 @@ export default class DialogflowConversation extends Conversation {
     });
   }
 
-  public enableDailyNotification(intent: string, payload: TMapping = {}): Conversation {
+  public enableDailyNotification(intent: string, callbackIntent: string = `:${this.currentIntent}`, payload: TMapping = {}): Conversation {
     const args = Object.keys(payload).map(name => ({
       name,
       textValue: payload[name],
@@ -196,6 +207,8 @@ export default class DialogflowConversation extends Conversation {
       App.INTENT_DELIMITER,
       this.platform.INTENT_DELIMITER,
     );
+
+    this.updateRegistrationCallback = callbackIntent;
 
     return this.add(new RegisterUpdate({ intent, arguments: args, frequency: 'DAILY' }));
   }

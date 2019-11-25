@@ -23,6 +23,11 @@ export default abstract class Conversation {
     DEVICE_COARSE_LOCATION: string;
   };
 
+  public abstract readonly CAPABILITIES: {
+    SCREEN_OUTPUT: string,
+    WEB_BROWSER: string,
+  };
+
   public abstract readonly TEXT_BUBBLE_LIMIT: Number;
 
   public abstract readonly sessionData: TKeyValue;
@@ -40,9 +45,9 @@ export default abstract class Conversation {
   public currentIntent: string;
 
   public platform: Platform;
-  
+
   public noInput: boolean = false;
-  
+
   public scene: any;
 
   protected readonly config: TAppConfig;
@@ -112,7 +117,7 @@ export default abstract class Conversation {
     this.sessionData.__history = this.sessionData.__history || [];
     return <THistoryItem[]>(<any[]>this.sessionData.__history);
   }
-  
+
   public set version(version: string) {
     this.sessionData.__version = version;
   }
@@ -214,14 +219,12 @@ export default abstract class Conversation {
   private get trackingDataCollector(): TTrackingDataCollector {
     return this.config.tracking.dataCollector;
   }
-  
+
   public abstract canLinkOut(): boolean;
 
   public abstract show(image: string, alt?: string): Conversation;
 
   public abstract canTransfer(...capabilities: any[]): boolean;
-
-  public abstract transferToMobile(description: string): Conversation;
 
   public abstract transfer(...capabilities: any[]): Conversation;
 
@@ -265,14 +268,14 @@ export default abstract class Conversation {
     text?: string,
     extra?: TKeyValue
   ): Conversation;
-  
+
   public abstract requestNotificationPermission(
     intent: string,
     deniedIntent: string,
     text?: string,
     payload?: TKeyValue
   ): Conversation
-  
+
   public abstract respond(): Conversation;
 
   public abstract list(options: {
@@ -412,11 +415,11 @@ export default abstract class Conversation {
 
   public repeat(): Conversation {
     if (this.previousSpeech.key) this.say(this.previousSpeech.key, this.previousSpeech.params);
-    
+
     this
       .suggest(...this.previousSuggestions)
       .expect(this.previousContext);
-    
+
     return this;
   }
 

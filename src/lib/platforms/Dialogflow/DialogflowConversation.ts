@@ -26,9 +26,9 @@ export default class DialogflowConversation extends Conversation {
     DEVICE_COARSE_LOCATION: 'DEVICE_COARSE_LOCATION',
   };
 
-  public static CAPABILITIES: { [key: string]: SurfaceCapability } = {
-    SCREEN_OUTPUT: 'actions.capability.SCREEN_OUTPUT',
-    WEB_BROWSER: 'actions.capability.WEB_BROWSER',
+  public readonly CAPABILITIES = {
+    SCREEN_OUTPUT: 'actions.capability.SCREEN_OUTPUT' as SurfaceCapability,
+    WEB_BROWSER: 'actions.capability.WEB_BROWSER' as SurfaceCapability,
   };
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
@@ -70,7 +70,7 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public show(image: string, alt: string = image): Conversation {
-    const wildcard = /\{(\d+)\}/;
+    const wildcard = /{(\d+)}/;
     const matches = image.match(wildcard);
 
     if (matches) {
@@ -94,8 +94,8 @@ export default class DialogflowConversation extends Conversation {
     return (
       this.canLinkOut() ||
       this.canTransfer(
-        DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
-        DialogflowConversation.CAPABILITIES.WEB_BROWSER,
+        this.CAPABILITIES.SCREEN_OUTPUT,
+        this.CAPABILITIES.WEB_BROWSER,
       )
     );
   }
@@ -113,24 +113,17 @@ export default class DialogflowConversation extends Conversation {
 
     if (
       this.canTransfer(
-        DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
-        DialogflowConversation.CAPABILITIES.WEB_BROWSER,
+        this.CAPABILITIES.SCREEN_OUTPUT,
+        this.CAPABILITIES.WEB_BROWSER,
       )
     ) {
       return this.transfer([
-        DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
-        DialogflowConversation.CAPABILITIES.WEB_BROWSER
+        this.CAPABILITIES.SCREEN_OUTPUT,
+        this.CAPABILITIES.WEB_BROWSER
       ], description);
     }
 
     return this;
-  }
-
-  public transferToMobile(description: string): Conversation {
-    return this.transfer([
-      DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
-      DialogflowConversation.CAPABILITIES.WEB_BROWSER,
-    ], description);
   }
 
   public transfer(capabilities: SurfaceCapability[], description: string): Conversation {
@@ -278,21 +271,21 @@ export default class DialogflowConversation extends Conversation {
 
   public hasDisplay(): boolean {
     return this.conversationObject.surface.capabilities.has(
-      DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT,
+      this.CAPABILITIES.SCREEN_OUTPUT,
     );
   }
 
   public hasBrowser(): boolean {
     return this.conversationObject.surface.capabilities.has(
-      DialogflowConversation.CAPABILITIES.WEB_BROWSER,
+      this.CAPABILITIES.WEB_BROWSER,
     );
   }
 
   public canLinkOut(): boolean {
     const capabilities = this.conversationObject.surface.capabilities;
     return (
-      capabilities.has(DialogflowConversation.CAPABILITIES.SCREEN_OUTPUT) &&
-      capabilities.has(DialogflowConversation.CAPABILITIES.WEB_BROWSER)
+      capabilities.has(this.CAPABILITIES.SCREEN_OUTPUT) &&
+      capabilities.has(this.CAPABILITIES.WEB_BROWSER)
     );
   }
 

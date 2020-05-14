@@ -14,7 +14,7 @@ import {
   RegisterUpdate,
   SimpleResponse,
 } from 'actions-on-google';
-import { sample, range, without, get } from 'lodash';
+import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue, TMapping, TImmersiveResponse } from '../../common/types';
 import App from '../../common/App';
@@ -32,12 +32,6 @@ export default class DialogflowConversation extends Conversation {
   };
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
-
-  private static DEFAULT_EXTENSION: TMapping = {
-    sfx: 'mp3',
-    image: 'png',
-    voice: 'wav',
-  };
 
   private conversationObject: GoogleDialogflowConversation;
 
@@ -363,20 +357,5 @@ export default class DialogflowConversation extends Conversation {
     }
 
     return this;
-  }
-
-  private getAssetUrl(type: string, asset: string): string {
-    const path = get(this.config.storage, ['paths', type], `${type}/`);
-    const extension = get(
-      this.config.storage,
-      ['extensions', type],
-      DialogflowConversation.DEFAULT_EXTENSION[type],
-    );
-    return `${this.storageUrl}${path}${asset}.${extension}`;
-  }
-
-  private getImageUrl(image): string {
-    if (image.match(/^https?:\/\//)) return image;
-    return this.getAssetUrl('images', image);
   }
 }

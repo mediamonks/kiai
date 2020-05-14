@@ -62,6 +62,12 @@ export default abstract class Conversation {
 
   protected lastSpeech: TSpeech = { key: '' };
 
+  private static DEFAULT_EXTENSION: TMapping = {
+    sfx: 'mp3',
+    image: 'png',
+    voice: 'wav',
+  };
+
   private intentHandlers: { handler: TIntentHandler; payload: any }[] = [];
 
   private tracker: Tracker;
@@ -527,6 +533,21 @@ export default abstract class Conversation {
     }
 
     return `${flowName}${App.INTENT_DELIMITER}${intentName}`;
+  }
+
+  protected getAssetUrl(type: string, asset: string): string {
+    const path = get(this.config.storage, ['paths', type], `${type}/`);
+    const extension = get(
+      this.config.storage,
+      ['extensions', type],
+      Conversation.DEFAULT_EXTENSION[type],
+    );
+    return `${this.storageUrl}${path}${asset}.${extension}`;
+  }
+
+  protected getImageUrl(image): string {
+    if (image.match(/^https?:\/\//)) return image;
+    return this.getAssetUrl('images', image);
   }
 
   private handleError(error: Error): Conversation {

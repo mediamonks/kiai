@@ -46,6 +46,11 @@ export type TStorageConfig = {
     sfx?: string;
     voice?: string;
   };
+  extensions?: {
+    images?: string;
+    sfx?: string;
+    voice?: string;
+  };
 };
 
 export type TAppConfig = {
@@ -56,9 +61,6 @@ export type TAppConfig = {
   voice: TVoiceIndex;
   tracking: TTrackingConfig;
   storage: TStorageConfig;
-  sfx?: {
-    extension?: string;
-  };
   viewUrl?: string;
 };
 

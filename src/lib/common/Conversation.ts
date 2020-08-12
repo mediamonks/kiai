@@ -309,7 +309,7 @@ export default abstract class Conversation {
 
     if (!msgSrc) {
       // if it contains anything other than lowercase letters, digits and underscores, it's probably not a key, so we don't show a warning
-      if (!path.match(/^[\w\d]+$/))
+      if (path.match(/^[\w\d]+$/))
         console.warn(`Translation not defined for language "${this.locale}", path "${path}"`);
       return path;
     }

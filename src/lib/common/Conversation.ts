@@ -3,7 +3,7 @@ import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
 import App from './App';
 import {
-  TAppConfig,
+  TAppConfig, TAssetType,
   TFlows,
   THistoryItem,
   TIntentHandler,
@@ -295,6 +295,17 @@ export default abstract class Conversation {
     }[];
   }): Conversation;
 
+  public abstract carousel(options: {
+    title?: string;
+    items: {
+      description: string;
+      image: string;
+      synonyms?: string[];
+      title?: string;
+      url?: string;
+    }[];
+  }): Conversation;
+
   public abstract enableDailyNotification(intent: string, callbackIntent: string, payload?: TMapping): Conversation;
 
   protected abstract sendResponse(): Conversation;
@@ -535,7 +546,7 @@ export default abstract class Conversation {
     return `${flowName}${App.INTENT_DELIMITER}${intentName}`;
   }
 
-  protected getAssetUrl(type: string, asset: string): string {
+  protected getAssetUrl(type: TAssetType, asset: string): string {
     const path = get(this.config.storage, ['paths', type], `${type}/`);
     const extension = get(
       this.config.storage,

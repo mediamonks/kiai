@@ -73,3 +73,5 @@ export interface IPlatformConstructor {
 }
 
 export type TImmersiveResponse = { updatedState: { fields: TKeyValue }, loadImmersiveUrl?: string };
+
+export type TAssetType = 'sfx' | 'voice' | 'images';

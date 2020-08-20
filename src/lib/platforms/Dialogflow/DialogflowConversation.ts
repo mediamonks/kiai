@@ -13,6 +13,8 @@ import {
   Button,
   RegisterUpdate,
   SimpleResponse,
+  Carousel,
+  BrowseCarousel,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -87,10 +89,7 @@ export default class DialogflowConversation extends Conversation {
   public canRedirect(): boolean {
     return (
       this.canLinkOut() ||
-      this.canTransfer(
-        this.CAPABILITIES.SCREEN_OUTPUT,
-        this.CAPABILITIES.WEB_BROWSER,
-      )
+      this.canTransfer(this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER)
     );
   }
 
@@ -105,16 +104,11 @@ export default class DialogflowConversation extends Conversation {
   }): Conversation {
     if (this.canLinkOut()) return this.add(new LinkOutSuggestion({ url, name }));
 
-    if (
-      this.canTransfer(
-        this.CAPABILITIES.SCREEN_OUTPUT,
-        this.CAPABILITIES.WEB_BROWSER,
-      )
-    ) {
-      return this.transfer([
-        this.CAPABILITIES.SCREEN_OUTPUT,
-        this.CAPABILITIES.WEB_BROWSER
-      ], description);
+    if (this.canTransfer(this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER)) {
+      return this.transfer(
+        [this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER],
+        description,
+      );
     }
 
     return this;
@@ -126,7 +120,7 @@ export default class DialogflowConversation extends Conversation {
         context: description,
         notification: description,
         capabilities,
-      })
+      }),
     );
   }
 
@@ -178,13 +172,22 @@ export default class DialogflowConversation extends Conversation {
     ).expect('permission_confirmation');
   }
 
-  public requestNotificationPermission(intent: string, deniedIntent: string, text?: string, payload: TKeyValue = {}) {
+  public requestNotificationPermission(
+    intent: string,
+    deniedIntent: string,
+    text?: string,
+    payload: TKeyValue = {},
+  ) {
     return this.requestPermission('UPDATE', deniedIntent, text, {
-      updatePermissionValueSpec: { intent, arguments: [ payload ] },
+      updatePermissionValueSpec: { intent, arguments: [payload] },
     });
   }
 
-  public enableDailyNotification(intent: string, callbackIntent: string = `:${this.currentIntent}`, payload: TMapping = {}): Conversation {
+  public enableDailyNotification(
+    intent: string,
+    callbackIntent: string = `:${this.currentIntent}`,
+    payload: TMapping = {},
+  ): Conversation {
     const args = Object.keys(payload).map(name => ({
       name,
       textValue: payload[name],
@@ -249,6 +252,33 @@ export default class DialogflowConversation extends Conversation {
     return this.add(new List({ title, items: listItems }));
   }
 
+  public carousel({
+    items,
+  }: {
+    items: {
+      description: string;
+      image?: string;
+      synonyms?: string[];
+      title?: string;
+      url?: string;
+    }[];
+  }): Conversation {
+    const listItems = items.map(item => ({
+      description: item.description,
+      image:
+        item.image &&
+        new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
+      synonyms: item.synonyms,
+      title: item.title,
+      url: item.url,
+    }));
+
+    if (items.length < 2 || items.length > 10)
+      throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');
+
+    return this.add(new (items[0].url ? BrowseCarousel : Carousel)({ items: listItems }));
+  }
+
   public respond(): DialogflowConversation {
     const simpleResponses = this.output.filter(response => typeof response === 'string');
 
@@ -264,15 +294,11 @@ export default class DialogflowConversation extends Conversation {
   }
 
   public hasDisplay(): boolean {
-    return this.conversationObject.surface.capabilities.has(
-      this.CAPABILITIES.SCREEN_OUTPUT,
-    );
+    return this.conversationObject.surface.capabilities.has(this.CAPABILITIES.SCREEN_OUTPUT);
   }
 
   public hasBrowser(): boolean {
-    return this.conversationObject.surface.capabilities.has(
-      this.CAPABILITIES.WEB_BROWSER,
-    );
+    return this.conversationObject.surface.capabilities.has(this.CAPABILITIES.WEB_BROWSER);
   }
 
   public canLinkOut(): boolean {

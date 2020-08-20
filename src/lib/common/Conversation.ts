@@ -296,13 +296,13 @@ export default abstract class Conversation {
   }): Conversation;
 
   public abstract carousel(options: {
-    title?: string;
     items: {
-      description: string;
-      image: string;
+      title: string;
+      description?: string;
+      image?: string;
       synonyms?: string[];
-      title?: string;
       url?: string;
+      footer?: string;
     }[];
   }): Conversation;
 

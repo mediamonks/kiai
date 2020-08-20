@@ -14,7 +14,7 @@ import {
   RegisterUpdate,
   SimpleResponse,
   Carousel,
-  BrowseCarousel, BrowseCarouselItem,
+  BrowseCarousel, BrowseCarouselItem, BrowseCarouselItemOptions,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -256,28 +256,37 @@ export default class DialogflowConversation extends Conversation {
     items,
   }: {
     items: {
-      description: string;
+      title: string;
+      description?: string;
       image?: string;
       synonyms?: string[];
-      title?: string;
       url?: string;
       footer?: string;
     }[];
   }): Conversation {
-    const listItems = items.map(item => new BrowseCarouselItem({
-      description: item.description,
-      image:
-        item.image &&
-        new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
-      title: item.title,
-      url: item.url,
-      footer: item.footer,
-    }));
+    const isBrowse = !!items.find(item => !!item.url);
 
     if (items.length < 2 || items.length > 10)
       throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');
 
-    return this.add(new (items[0].url ? BrowseCarousel : Carousel)({ items: listItems }));
+    const listItems = items.map(item => {
+      if (!isBrowse && item.footer) throw new Error('Carousel item can\'t have footer without url');
+
+      let listItem = {
+        ...item,
+        image: new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
+      };
+
+      if (isBrowse) return new BrowseCarouselItem(listItem as BrowseCarouselItemOptions);
+
+      return listItem;
+    });
+
+    if (isBrowse) {
+      return this.add(new BrowseCarousel({ items: listItems }));
+    } else {
+      return this.add(new Carousel({ items: listItems }));
+    }
   }
 
   public respond(): DialogflowConversation {

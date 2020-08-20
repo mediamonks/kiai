@@ -14,7 +14,7 @@ import {
   RegisterUpdate,
   SimpleResponse,
   Carousel,
-  BrowseCarousel,
+  BrowseCarousel, BrowseCarouselItem,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -261,16 +261,17 @@ export default class DialogflowConversation extends Conversation {
       synonyms?: string[];
       title?: string;
       url?: string;
+      footer?: string;
     }[];
   }): Conversation {
-    const listItems = items.map(item => ({
+    const listItems = items.map(item => new BrowseCarouselItem({
       description: item.description,
       image:
         item.image &&
         new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
-      synonyms: item.synonyms,
       title: item.title,
       url: item.url,
+      footer: item.footer,
     }));
 
     if (items.length < 2 || items.length > 10)

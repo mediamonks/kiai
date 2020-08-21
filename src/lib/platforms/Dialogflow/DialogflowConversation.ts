@@ -20,7 +20,6 @@ import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue, TMapping, TImmersiveResponse } from '../../common/types';
 import App from '../../common/App';
-import { response } from 'express';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {

@@ -20,6 +20,7 @@ import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
 import { TKeyValue, TMapping, TImmersiveResponse } from '../../common/types';
 import App from '../../common/App';
+import { response } from 'express';
 
 export default class DialogflowConversation extends Conversation {
   public readonly PERMISSIONS = {
@@ -292,7 +293,11 @@ export default class DialogflowConversation extends Conversation {
   public respond(): DialogflowConversation {
     const simpleResponses = this.output.filter(response => typeof response === 'string');
 
-    if (simpleResponses.length) this.responses.push(`<speak>${simpleResponses.join(' ')}</speak>`);
+    if (simpleResponses.length) {
+      let responseText = simpleResponses.join(' ');
+      if (!this.config.disableSsml) responseText = `<speak>${responseText}</speak>`;
+      this.responses.push(responseText);
+    }
 
     this.responses = this.responses.concat(
       this.output.filter(response => typeof response !== 'string'),

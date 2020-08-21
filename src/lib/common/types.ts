@@ -62,6 +62,7 @@ export type TAppConfig = {
   tracking: TTrackingConfig;
   storage: TStorageConfig;
   viewUrl?: string;
+  disableSsml?: boolean;
 };
 
 export type TSpeech = { key: string; params?: TMapping | string[] };

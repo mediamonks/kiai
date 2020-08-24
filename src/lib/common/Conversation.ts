@@ -246,6 +246,14 @@ export default abstract class Conversation {
     description?: string;
   }): Conversation;
 
+  public abstract linkOut({
+    url,
+    name,
+  }: {
+    url: string;
+    name: string;
+  }): Conversation;
+
   public abstract play(sound: string, fallback?: string): Conversation;
 
   public abstract speak(voice: string, text?: string): Conversation;

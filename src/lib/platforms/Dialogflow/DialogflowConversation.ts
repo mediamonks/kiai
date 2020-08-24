@@ -114,6 +114,16 @@ export default class DialogflowConversation extends Conversation {
     return this;
   }
 
+  public linkOut({
+    url,
+    name,
+  }: {
+    url: string;
+    name: string;
+  }): Conversation {
+    return this.add(new LinkOutSuggestion({ url, name }));
+  }
+
   public transfer(capabilities: SurfaceCapability[], description: string): Conversation {
     return this.add(
       new NewSurface({
@@ -262,28 +272,42 @@ export default class DialogflowConversation extends Conversation {
       synonyms?: string[];
       url?: string;
       footer?: string;
+      key?: string;
     }[];
   }): Conversation {
     const isBrowse = !!items.find(item => !!item.url);
 
+    const hasKeys = !!items.find(item => !!item.key);
+
+    if (isBrowse && hasKeys) throw new Error('A "Browse Carousel"\'s items (with url) can not have keys');
+
     if (items.length < 2 || items.length > 10)
       throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');
 
-    const listItems = items.map(item => {
+    const listItems = hasKeys ? {} : [];
+
+    items.forEach(item => {
       if (!isBrowse && item.footer) throw new Error('Carousel item can\'t have footer without url');
+
+      if (hasKeys && !item.key) throw new Error('Either all or none of a carousel\'s items should have a key');
 
       let listItem = {
         ...item,
         image: new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
       };
 
-      if (isBrowse) return new BrowseCarouselItem(listItem as BrowseCarouselItemOptions);
 
-      return listItem;
+      if (isBrowse) {
+        (listItems as BrowseCarouselItem[]).push(new BrowseCarouselItem(listItem as BrowseCarouselItemOptions));
+        return;
+      }
+
+      delete listItem.key;
+      listItems[item.key] = listItem;
     });
 
     if (isBrowse) {
-      return this.add(new BrowseCarousel({ items: listItems }));
+      return this.add(new BrowseCarousel({ items: listItems as BrowseCarouselItem[] }));
     } else {
       return this.add(new Carousel({ items: listItems }));
     }

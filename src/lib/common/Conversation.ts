@@ -311,6 +311,7 @@ export default abstract class Conversation {
       synonyms?: string[];
       url?: string;
       footer?: string;
+      key?: string;
     }[];
   }): Conversation;
 

@@ -14,7 +14,7 @@ import {
   RegisterUpdate,
   SimpleResponse,
   Carousel,
-  BrowseCarousel, BrowseCarouselItem, BrowseCarouselItemOptions,
+  BrowseCarousel, BrowseCarouselItem, BrowseCarouselItemOptions, ImageOptions,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -268,7 +268,7 @@ export default class DialogflowConversation extends Conversation {
     items: {
       title: string;
       description?: string;
-      image?: string;
+      image?: string | ImageOptions;
       synonyms?: string[];
       url?: string;
       footer?: string;
@@ -291,11 +291,14 @@ export default class DialogflowConversation extends Conversation {
 
       if (hasKeys && !item.key) throw new Error('Either all or none of a carousel\'s items should have a key');
 
-      let listItem = {
-        ...item,
-        image: new Image({ url: this.getImageUrl(item.image), alt: item.title || item.description }),
-      };
+      if (typeof item.image === 'string') {
+        item.image = { url: item.image, alt: '' };
+      }
 
+      item.image.url = this.getImageUrl(item.image);
+      item.image.alt = item.image.alt || item.title || item.description;
+
+      let listItem = { ...item, image: new Image(item.image) };
 
       if (isBrowse) {
         (listItems as BrowseCarouselItem[]).push(new BrowseCarouselItem(listItem as BrowseCarouselItemOptions));

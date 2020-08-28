@@ -15,6 +15,7 @@ import {
 } from './types';
 import Tracker from './Tracker';
 import Platform from './Platform';
+import { ImageOptions } from 'actions-on-google';
 
 export default abstract class Conversation {
   public abstract readonly PERMISSIONS: {
@@ -307,7 +308,7 @@ export default abstract class Conversation {
     items: {
       title: string;
       description?: string;
-      image?: string;
+      image?: string | ImageOptions;
       synonyms?: string[];
       url?: string;
       footer?: string;

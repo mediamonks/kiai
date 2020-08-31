@@ -3,11 +3,13 @@ import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
 import App from './App';
 import {
-  TAppConfig, TAssetType,
+  TAppConfig,
+  TAssetType,
   TFlows,
   THistoryItem,
   TIntentHandler,
   TKeyValue,
+  TLinkOutType,
   TLocales,
   TMapping,
   TSpeech,
@@ -25,8 +27,8 @@ export default abstract class Conversation {
   };
 
   public abstract readonly CAPABILITIES: {
-    SCREEN_OUTPUT: string,
-    WEB_BROWSER: string,
+    SCREEN_OUTPUT: string;
+    WEB_BROWSER: string;
   };
 
   public abstract readonly TEXT_BUBBLE_LIMIT: Number;
@@ -247,13 +249,7 @@ export default abstract class Conversation {
     description?: string;
   }): Conversation;
 
-  public abstract linkOut({
-    url,
-    name,
-  }: {
-    url: string;
-    name: string;
-  }): Conversation;
+  public abstract linkOut(url: string, name: string, type?: TLinkOutType): Conversation;
 
   public abstract play(sound: string, fallback?: string): Conversation;
 
@@ -281,15 +277,15 @@ export default abstract class Conversation {
     permissions: string[] | string,
     deniedIntent: string,
     text?: string,
-    extra?: TKeyValue
+    extra?: TKeyValue,
   ): Conversation;
 
   public abstract requestNotificationPermission(
     intent: string,
     deniedIntent: string,
     text?: string,
-    payload?: TKeyValue
-  ): Conversation
+    payload?: TKeyValue,
+  ): Conversation;
 
   public abstract respond(): Conversation;
 
@@ -316,7 +312,11 @@ export default abstract class Conversation {
     }[];
   }): Conversation;
 
-  public abstract enableDailyNotification(intent: string, callbackIntent: string, payload?: TMapping): Conversation;
+  public abstract enableDailyNotification(
+    intent: string,
+    callbackIntent: string,
+    payload?: TMapping,
+  ): Conversation;
 
   protected abstract sendResponse(): Conversation;
 
@@ -443,9 +443,7 @@ export default abstract class Conversation {
   public repeat(): Conversation {
     if (this.previousSpeech.key) this.say(this.previousSpeech.key, this.previousSpeech.params);
 
-    this
-      .suggest(...this.previousSuggestions)
-      .expect(this.previousContext);
+    this.suggest(...this.previousSuggestions).expect(this.previousContext);
 
     return this;
   }
@@ -566,7 +564,7 @@ export default abstract class Conversation {
     return `${this.storageUrl}${path}${asset}.${extension}`;
   }
 
-  protected getImageUrl(image): string {
+  protected getImageUrl(image: string): string {
     if (image.match(/^https?:\/\//)) return image;
     return this.getAssetUrl('images', image);
   }

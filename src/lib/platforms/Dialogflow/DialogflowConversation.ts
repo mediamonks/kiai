@@ -14,11 +14,14 @@ import {
   RegisterUpdate,
   SimpleResponse,
   Carousel,
-  BrowseCarousel, BrowseCarouselItem, BrowseCarouselItemOptions, ImageOptions,
+  BrowseCarousel,
+  BrowseCarouselItem,
+  BrowseCarouselItemOptions,
+  ImageOptions,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
-import { TKeyValue, TMapping, TImmersiveResponse } from '../../common/types';
+import { TKeyValue, TMapping, TImmersiveResponse, TLinkOutType } from '../../common/types';
 import App from '../../common/App';
 
 export default class DialogflowConversation extends Conversation {
@@ -31,6 +34,12 @@ export default class DialogflowConversation extends Conversation {
   public readonly CAPABILITIES = {
     SCREEN_OUTPUT: 'actions.capability.SCREEN_OUTPUT' as SurfaceCapability,
     WEB_BROWSER: 'actions.capability.WEB_BROWSER' as SurfaceCapability,
+  };
+
+  public readonly LINK_OUT_TYPE = {
+    SUGGESTION: 'suggestion' as TLinkOutType,
+    BUTTON: 'button' as TLinkOutType,
+    CARD: 'card' as TLinkOutType,
   };
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
@@ -114,14 +123,16 @@ export default class DialogflowConversation extends Conversation {
     return this;
   }
 
-  public linkOut({
-    url,
-    name,
-  }: {
-    url: string;
-    name: string;
-  }): Conversation {
-    return this.add(new LinkOutSuggestion({ url, name }));
+  public linkOut(
+    url: string,
+    title: string,
+    type: TLinkOutType = this.LINK_OUT_TYPE.SUGGESTION,
+  ): Conversation {
+    if (type === this.LINK_OUT_TYPE.BUTTON) {
+      return this.add(new Button({ url, title }));
+    }
+
+    return this.add(new LinkOutSuggestion({ url, name: title }));
   }
 
   public transfer(capabilities: SurfaceCapability[], description: string): Conversation {
@@ -279,7 +290,8 @@ export default class DialogflowConversation extends Conversation {
 
     const hasKeys = !!items.find(item => !!item.key);
 
-    if (isBrowse && hasKeys) throw new Error('A "Browse Carousel"\'s items (with url) can not have keys');
+    if (isBrowse && hasKeys)
+      throw new Error('Carousel items can have either a "url", or a "key", but not both');
 
     if (items.length < 2 || items.length > 10)
       throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');
@@ -287,21 +299,24 @@ export default class DialogflowConversation extends Conversation {
     const listItems = hasKeys ? {} : [];
 
     items.forEach(item => {
-      if (!isBrowse && item.footer) throw new Error('Carousel item can\'t have footer without url');
+      if (!isBrowse && item.footer) throw new Error("Carousel item can't have footer without url");
 
-      if (hasKeys && !item.key) throw new Error('Either all or none of a carousel\'s items should have a key');
+      if (hasKeys && !item.key)
+        throw new Error("Either all or none of a carousel's items should have a key");
 
       if (typeof item.image === 'string') {
         item.image = { url: item.image, alt: '' };
       }
 
-      item.image.url = this.getImageUrl(item.image);
+      item.image.url = this.getImageUrl(item.image.url);
       item.image.alt = item.image.alt || item.title || item.description;
 
       let listItem = { ...item, image: new Image(item.image) };
 
       if (isBrowse) {
-        (listItems as BrowseCarouselItem[]).push(new BrowseCarouselItem(listItem as BrowseCarouselItemOptions));
+        (listItems as BrowseCarouselItem[]).push(
+          new BrowseCarouselItem(listItem as BrowseCarouselItemOptions),
+        );
         return;
       }
 

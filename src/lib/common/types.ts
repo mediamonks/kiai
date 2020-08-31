@@ -83,3 +83,5 @@ export type TImage = {
   height?: number,
   width?: number,
 };
+
+export type TLinkOutType = 'suggestion' | 'button' | 'card';

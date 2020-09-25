@@ -36,12 +36,6 @@ export default class DialogflowConversation extends Conversation {
     WEB_BROWSER: 'actions.capability.WEB_BROWSER' as SurfaceCapability,
   };
 
-  public readonly LINK_OUT_TYPE = {
-    SUGGESTION: 'suggestion' as TLinkOutType,
-    BUTTON: 'button' as TLinkOutType,
-    CARD: 'card' as TLinkOutType,
-  };
-
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
 
   private conversationObject: GoogleDialogflowConversation;
@@ -291,7 +285,7 @@ export default class DialogflowConversation extends Conversation {
     const hasKeys = !!items.find(item => !!item.key);
 
     if (isBrowse && hasKeys)
-      throw new Error('Carousel items can have either a "url", or a "key", but not both');
+      throw new Error('Carousel items can have either all "url"s, or all "key"s, but not a mix');
 
     if (items.length < 2 || items.length > 10)
       throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');

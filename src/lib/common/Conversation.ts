@@ -39,6 +39,12 @@ export default abstract class Conversation {
 
   public abstract readonly userProfile: TKeyValue;
 
+  public readonly LINK_OUT_TYPE = {
+    SUGGESTION: 'suggestion' as TLinkOutType,
+    BUTTON: 'button' as TLinkOutType,
+    CARD: 'card' as TLinkOutType,
+  };
+
   public params: TKeyValue;
 
   public input: any[];

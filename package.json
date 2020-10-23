@@ -1,6 +1,6 @@
 {
   "name": "kiai",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "Kiai Voice Action Framework",
   "main": "dist/Kiai.js",
   "scripts": {

@@ -271,7 +271,7 @@ export default class DialogflowConversation extends Conversation {
     items,
   }: {
     items: {
-      title: string;
+      title?: string;
       description?: string;
       image?: string | ImageOptions;
       synonyms?: string[];
@@ -294,6 +294,8 @@ export default class DialogflowConversation extends Conversation {
 
     items.forEach(item => {
       if (!isBrowse && item.footer) throw new Error("Carousel item can't have footer without url");
+
+      if (isBrowse && !item.title) throw new Error("Carousel items with a url require a title");
 
       if (hasKeys && !item.key)
         throw new Error("Either all or none of a carousel's items should have a key");

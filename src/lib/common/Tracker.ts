@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { TKeyValue, TTrackingConfig } from './types';
-import * as Amplitude from 'amplitude';
+import Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
 export default class Tracker {
@@ -10,7 +10,7 @@ export default class Tracker {
   public constructor(config: TTrackingConfig) {
     const amplitudeApiKey = get(config, 'amplitude.apiKey');
     if (amplitudeApiKey) this.amplitude = new Amplitude(amplitudeApiKey);
-  
+
     this.gaTrackingId = get(config, 'googleAnalytics.trackingId');
   }
 
@@ -34,10 +34,10 @@ export default class Tracker {
         userProperties: userData,
       });
     }
-  
+
     if (this.gaTrackingId) {
       const ga = ua(this.gaTrackingId, userId, { strictCidFormat: false });
-    
+
       ga.event({
         ec: data.category || '[unspecified]',
         ea: event,

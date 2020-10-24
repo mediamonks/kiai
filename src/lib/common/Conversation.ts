@@ -308,7 +308,7 @@ export default abstract class Conversation {
 
   public abstract carousel(options: {
     items: {
-      title: string;
+      title?: string;
       description?: string;
       image?: string | ImageOptions;
       synonyms?: string[];

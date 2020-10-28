@@ -203,7 +203,7 @@ export default abstract class Conversation {
   }
 
   protected get transferCallback(): string {
-    return <string>(this.sessionData.__loginCallback || '');
+    return <string>(this.sessionData.__transferCallback || '');
   }
 
   protected get updateRegistrationCallback(): string {

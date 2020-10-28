@@ -108,6 +108,8 @@ export default class DialogflowConversation extends Conversation {
     if (this.canLinkOut()) return this.add(new LinkOutSuggestion({ url, name }));
 
     if (this.canTransfer(this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER)) {
+      this.transferCallback = `:${this.currentIntent}`;
+
       return this.transfer(
         [this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER],
         description,

@@ -2,7 +2,7 @@ import { TAppConfig, TFlow, TFlows, TIntentHandler, TMapping } from './types';
 
 export default abstract class Platform {
   public abstract readonly IDENTIFIER: string;
-  
+
   public abstract readonly INTENT_DELIMITER: string;
 
   public abstract readonly requestHandler: () => any;
@@ -35,21 +35,27 @@ export default abstract class Platform {
 
   protected registerConfirmationIntents(...options: string[]): void {
     options.forEach(option => {
-      this.registerIntent(`confirmation_${option}`, conversation => {
+      this.registerIntent(`kiai_confirmation_${option}`, conversation => {
         conversation.handleConfirmation(option);
       });
     });
   }
 
   protected registerPermissionIntents(): void {
-    this.registerIntent('permission_confirmation', conversation => {
+    this.registerIntent('kiai_permission_confirmation', conversation => {
       conversation.handlePermission(!!conversation.input[0]);
     });
   }
 
   protected registerLoginIntent(): void {
-    this.registerIntent('login', conversation => {
+    this.registerIntent('kiai_login', conversation => {
       conversation.handleLogin(conversation.input[0].status === 'OK');
+    });
+  }
+
+  protected registerTransferIntent(): void {
+    this.registerIntent('kiai_transfer', conversation => {
+      conversation.handleTransfer();
     });
   }
 
@@ -61,7 +67,7 @@ export default abstract class Platform {
   }
 
   protected registerUpdateIntent(): void {
-    this.registerIntent('notification_confirm', conversation => {
+    this.registerIntent('kiai_notification_confirmation', conversation => {
       conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
     });
   }

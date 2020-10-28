@@ -198,6 +198,14 @@ export default abstract class Conversation {
     return <string>(this.sessionData.__loginCallback || '');
   }
 
+  protected set transferCallback(callbackIntent: string) {
+    this.sessionData.__transferCallback = this.resolveIntent(callbackIntent);
+  }
+
+  protected get transferCallback(): string {
+    return <string>(this.sessionData.__loginCallback || '');
+  }
+
   protected get updateRegistrationCallback(): string {
     return <string>(this.sessionData.__updateRegistrationCallback || '');
   }
@@ -531,6 +539,10 @@ export default abstract class Conversation {
 
   public handleLogin(wasSuccessful: boolean): Conversation {
     return this.next(this.loginCallback, wasSuccessful);
+  }
+
+  public handleTransfer(): Conversation {
+    return this.next(this.transferCallback);
   }
 
   public handleUpdateRegistration(confirmed: boolean): Conversation {

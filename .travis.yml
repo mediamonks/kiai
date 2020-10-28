@@ -7,7 +7,7 @@ language: node_js
 cache: npm
 
 node_js:
-  - '10'
+  - '12'
 
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info
@@ -18,7 +18,7 @@ deploy:
     api_token: $NPM_TOKEN
     on:
       tags: true
-      node_js: '10'
+      node_js: '12'
 
 addons:
   code_climate:

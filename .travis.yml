@@ -3,19 +3,12 @@ language: node_js
 cache: npm
 
 node_js:
-  - '8'
-  - '9'
+  - '10'
 
 sudo: false
 
-before_install:
-
-script:
-  - npm run test
-
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info
-  - node_modules/.bin/coveralls < coverage/lcov.info
 
 deploy:
   - provider: npm
@@ -23,8 +16,7 @@ deploy:
     api_key: $NPM_TOKEN
     on:
       tags: true
-      node: '8'
-    skip_cleanup: true
+      node: '10'
 
 addons:
   code_climate:

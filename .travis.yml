@@ -15,10 +15,9 @@ after_script:
 deploy:
   - provider: npm
     email: 'devmonk@mediamonks.com'
-    api_token: $NPM_TOKEN
+    api_key: $NPM_TOKEN
     on:
       tags: true
-      node_js: '12'
 
 addons:
   code_climate:

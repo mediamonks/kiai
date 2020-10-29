@@ -5,7 +5,7 @@ cache: npm
 node_js:
   - '12'
 
-cleanup: false
+skip_cleanup: true
 
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info

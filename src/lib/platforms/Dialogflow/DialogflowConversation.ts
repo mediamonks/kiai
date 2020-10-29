@@ -105,14 +105,13 @@ export default class DialogflowConversation extends Conversation {
     name: string;
     description?: string;
   }): Conversation {
-    if (this.canLinkOut()) return this.add(new LinkOutSuggestion({ url, name }));
+    if (this.canLinkOut()) return this.linkOut(url, name);
 
     if (this.canTransfer(this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER)) {
-      this.transferCallback = `:${this.currentIntent}`;
-
       return this.transfer(
         [this.CAPABILITIES.SCREEN_OUTPUT, this.CAPABILITIES.WEB_BROWSER],
         description,
+        `:${this.currentIntent}`,
       );
     }
 
@@ -122,16 +121,26 @@ export default class DialogflowConversation extends Conversation {
   public linkOut(
     url: string,
     title: string,
-    type: TLinkOutType = this.LINK_OUT_TYPE.SUGGESTION,
+    type: TLinkOutType = this.LINK_OUT_TYPE.CARD,
   ): Conversation {
     if (type === this.LINK_OUT_TYPE.BUTTON) {
       return this.add(new Button({ url, title }));
     }
 
+    if (type === this.LINK_OUT_TYPE.CARD) {
+      return this.showCard({ title, buttons: [{ title, url}] });
+    }
+
     return this.add(new LinkOutSuggestion({ url, name: title }));
   }
 
-  public transfer(capabilities: SurfaceCapability[], description: string): Conversation {
+  public transfer(
+    capabilities: SurfaceCapability[],
+    description: string,
+    callbackIntent?: string,
+  ): Conversation {
+    this.transferCallback = callbackIntent;
+
     return this.add(
       new NewSurface({
         context: description,
@@ -297,7 +306,7 @@ export default class DialogflowConversation extends Conversation {
     items.forEach(item => {
       if (!isBrowse && item.footer) throw new Error("Carousel item can't have footer without url");
 
-      if (isBrowse && !item.title) throw new Error("Carousel items with a url require a title");
+      if (isBrowse && !item.title) throw new Error('Carousel items with a url require a title');
 
       if (hasKeys && !item.key)
         throw new Error("Either all or none of a carousel's items should have a key");

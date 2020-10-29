@@ -1,0 +1,43 @@
+{
+  "root": true,
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": false
+  },
+  "extends": ["airbnb-base", "prettier"],
+  "plugins": ["import", "prettier"],
+  "settings": {
+    "import/resolver": {
+      "node": true,
+      "typescript": true
+    }
+  },
+  "rules": {
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "js": "never",
+        "ts": "never"
+      }
+    ],
+    "global-require": "off",
+    "max-len": 0,
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "all",
+        "printWidth": 100,
+        "tabWidth": 2,
+        "useTabs": false
+      }
+    ],
+    "no-underscore-dangle": 0,
+    "no-param-reassign": 0,
+    "no-plusplus": 0,
+    "linebreak-style": 0
+  }
+}

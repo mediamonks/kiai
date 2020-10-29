@@ -34,10 +34,12 @@ export default class Dialogflow extends Platform {
     this.registerConfirmationIntents('yes', 'no');
 
     this.registerPermissionIntents();
-    
+
     this.registerLoginIntent();
 
     this.registerUpdateIntent();
+
+    this.registerTransferIntent();
   }
 
   public get requestHandler(): () => any {
@@ -60,7 +62,7 @@ export default class Dialogflow extends Platform {
       delete this.conversation.scene;
 
       const [flowName, intentName] = intent.displayName.split(this.INTENT_DELIMITER);
-      
+
       if (intent.isFallback || this.conversation.noInput) {
         this.conversation.repromptCount++;
       } else {
@@ -70,7 +72,7 @@ export default class Dialogflow extends Platform {
         this.conversation.currentIntent = intentName;
       }
       this.conversation.addHistory(flowName, intentName, true);
-      
+
       this.conversation.addHandler(handler);
 
       return this.conversation.handleIntent();

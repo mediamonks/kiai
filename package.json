@@ -8,7 +8,8 @@
     "dev:ts": "tsc --watch",
     "build": "npm run build:ts",
     "build:ts": "tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "echo 'Coming soon!'"
   },
   "dependencies": {
     "actions-on-google": "^2.13.0",

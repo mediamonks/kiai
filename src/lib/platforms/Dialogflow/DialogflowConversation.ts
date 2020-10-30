@@ -40,8 +40,6 @@ export default class DialogflowConversation extends Conversation {
 
   private conversationObject: GoogleDialogflowConversation;
 
-  private followUpEvent: string;
-
   private responses: any[] = [];
 
   public get sessionData(): TKeyValue {
@@ -168,13 +166,6 @@ export default class DialogflowConversation extends Conversation {
     this.loginCallback = callbackIntent;
     return this.add(new SignIn(speech));
   }
-
-  /*
-  event(event: string): DialogflowConversation {
-    this.followUpEvent = event;
-    return this;
-  }
-*/
 
   public requestPermission(
     permissions: string[] | string,
@@ -438,11 +429,6 @@ export default class DialogflowConversation extends Conversation {
     if (this.endConversation) {
       this.conversationObject.close();
       this.endConversation = false;
-    }
-
-    if (this.followUpEvent) {
-      this.conversationObject.followup(this.followUpEvent);
-      this.followUpEvent = '';
     }
 
     return this;

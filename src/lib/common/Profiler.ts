@@ -4,7 +4,8 @@ export default class Profiler {
   private labels: {[key: string]: number} = {};
 
   start(label: string): void {
-    if (label in this.labels) console.warn('Profiler: starting label which was already started!'); // eslint-disable-line no-console
+    // eslint-disable-next-line no-console
+    if (label in this.labels) console.warn('Profiler: starting label which was already started!');
     this.labels[label] = performance.now();
   }
 

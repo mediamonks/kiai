@@ -1,14 +1,25 @@
+const profiler = require('../util/profiler');
+profiler.start('loading Dialogflow');
 import Dialogflow from '../platforms/Dialogflow/Dialogflow';
+profiler.end('loading Dialogflow');
+profiler.start('loading interfaces');
 import IFramework, { IFrameworkConstructor } from './IFramework';
+profiler.end('loading interfaces');
+profiler.start('loading frameworks');
 import Express from '../frameworks/Express';
 import Firebase from '../frameworks/Firebase';
 import GoogleCloudFunctions from '../frameworks/GoogleCloudFunctions';
+profiler.end('loading frameworks');
+profiler.start('loading Platform class');
 import Platform from './Platform';
+profiler.end('loading Platform class');
+profiler.start('loading types');
 import {
   IPlatformConstructor,
   TAppConfig,
   TConfig,
 } from './types';
+profiler.end('loading types');
 
 export default class App {
   public static INTENT_DELIMITER: string = ':';

@@ -1,4 +1,5 @@
 const { performance } = require('perf_hooks');
+
 const labels = {};
 
 module.exports = {

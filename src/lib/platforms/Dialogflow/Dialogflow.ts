@@ -25,9 +25,14 @@ export default class Dialogflow extends Platform {
   }) {
     super({ config });
 
+    this.profiler.start('Dialogflow init library');
+
     this.dialogflow = dialogflow({ clientId, debug });
 
     this.conversation = new DialogflowConversation({ config, platform: this });
+
+    this.profiler.end('Dialogflow init library');
+    this.profiler.start('Dialogflow register handlers');
 
     this.registerFlows(config.flows);
 
@@ -40,6 +45,8 @@ export default class Dialogflow extends Platform {
     this.registerUpdateIntent();
 
     this.registerTransferIntent();
+
+    this.profiler.end('Dialogflow register handlers');
   }
 
   public get requestHandler(): () => any {
@@ -51,6 +58,13 @@ export default class Dialogflow extends Platform {
   ): (conversation: any, params?: TKeyValue) => Promise<any> {
     return (conversation, params, ...input): Promise<any> => {
       const intent = conversation.body.queryResult.intent;
+
+      this.profiler.start(`Dialogflow init conversation`);
+
+      // TODO: test this code
+      if (!Object.keys(conversation.contexts.input).length) {
+        console.warn('No input contexts found. Possibly deleted by Dialogflow. Please check the output intent field of the last intent triggered.');
+      }
 
       this.conversation.setConversationObject(conversation);
       this.conversation.version = VERSION;
@@ -75,7 +89,14 @@ export default class Dialogflow extends Platform {
 
       this.conversation.addHandler(handler);
 
-      return this.conversation.handleIntent();
+      this.profiler.end(`Dialogflow init conversation`);
+
+      this.profiler.start(`Dialogflow handle intent "${intent}"`);
+
+      return this.conversation.handleIntent().then(conv => {
+        this.profiler.end(`Dialogflow handle intent "${intent}"`);
+        return conv;
+      });
     };
   }
 

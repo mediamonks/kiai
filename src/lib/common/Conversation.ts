@@ -512,7 +512,7 @@ export default abstract class Conversation {
     return this.next(this.permissionCallbacks[+!granted], granted);
   }
 
-  public handleIntent(): Promise<any> {
+  public handleIntent(): Promise<Conversation> {
     return new Promise(resolve => {
       const executeHandler = (): void => {
         if (!this.intentHandlers.length) {

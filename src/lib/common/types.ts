@@ -63,6 +63,7 @@ export type TAppConfig = {
   storage: TStorageConfig;
   viewUrl?: string;
   disableSsml?: boolean;
+  enableProfiler?: boolean;
 };
 
 export type TSpeech = { key: string; params?: TMapping | string[] };

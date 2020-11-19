@@ -1,4 +1,7 @@
+import { noop } from 'lodash';
 import { TAppConfig, TFlow, TFlows, TIntentHandler, TMapping } from './types';
+import Profiler from './Profiler';
+import IProfiler from './IProfiler';
 
 export default abstract class Platform {
   public abstract readonly IDENTIFIER: string;
@@ -9,8 +12,16 @@ export default abstract class Platform {
 
   private readonly config: TAppConfig;
 
+  private readonly _profiler: IProfiler = { start: noop, end: noop};
+
   protected constructor({ config }: { config: TAppConfig }) {
     this.config = config;
+
+    if (config.enableProfiler) this._profiler = new Profiler();
+  }
+
+  protected get profiler(): IProfiler {
+    return this._profiler;
   }
 
   private get localeMapping(): TMapping {

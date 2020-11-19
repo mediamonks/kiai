@@ -91,10 +91,10 @@ export default class Dialogflow extends Platform {
 
       this.profiler.end(`Dialogflow init conversation`);
 
-      this.profiler.start(`Dialogflow handle intent "${intent}"`);
+      this.profiler.start(`Dialogflow handle intent "${intent.displayName}"`);
 
       return this.conversation.handleIntent().then(conv => {
-        this.profiler.end(`Dialogflow handle intent "${intent}"`);
+        this.profiler.end(`Dialogflow handle intent "${intent.displayName}"`);
         return conv;
       });
     };

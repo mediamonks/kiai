@@ -17,7 +17,7 @@ export default abstract class Platform {
   protected constructor({ config }: { config: TAppConfig }) {
     this.config = config;
 
-    if (config.enableProfiler) this._profiler = new Profiler();
+    if (config.enableProfiling) this._profiler = new Profiler();
   }
 
   protected get profiler(): IProfiler {

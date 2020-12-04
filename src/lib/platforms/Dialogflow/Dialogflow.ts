@@ -62,13 +62,14 @@ export default class Dialogflow extends Platform {
       this.profiler.start(`Dialogflow init conversation`);
 
       // TODO: test this code
-      if (!Object.keys(conversation.contexts.input).length) {
-        console.warn('No input contexts found. Possibly deleted by Dialogflow. Please check the output intent field of the last intent triggered.');
-      }
+      // if (!Object.keys(conversation.contexts.input).length) {
+      //   console.warn('No input contexts found. Possibly deleted by Dialogflow. Please check the output context field of the last intent triggered.');
+      // }
 
       this.conversation.setConversationObject(conversation);
       this.conversation.version = VERSION;
-      this.conversation.locale = this.mapLocale(conversation.user.locale);
+      const locale = conversation.user.locale || conversation.body.queryResult.languageCode;
+      this.conversation.locale = this.mapLocale(locale);
       this.conversation.params = params || {};
       this.conversation.input = input || [];
       this.conversation.location = conversation.device.location;

@@ -63,7 +63,7 @@ export default abstract class Platform {
     });
   }
 
-  protected registerPermissionIntents(): void {
+  protected registerPermissionIntent(): void {
     this.registerIntent(this.SYSTEM_INTENT_NAMES.PERMISSION, conversation => {
       conversation.handlePermission(!!conversation.input[0]);
     });

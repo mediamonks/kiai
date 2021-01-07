@@ -14,7 +14,7 @@ export default class Dialogflow extends Platform {
 
   public readonly INTENT_DELIMITER: string = '_';
 
-  public readonly SYSTEM_INTENT_NAMES: {
+  public readonly SYSTEM_INTENT_NAMES = {
     PERMISSION: 'kiai_permission',
     LOGIN: 'kiai_login',
     CONFIRMATION: 'kiai_confirmation',
@@ -46,7 +46,7 @@ export default class Dialogflow extends Platform {
 
     this.registerConfirmationIntents();
 
-    this.registerPermissionIntents();
+    this.registerPermissionIntent();
 
     this.registerLoginIntent();
 

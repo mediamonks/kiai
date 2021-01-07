@@ -15,6 +15,7 @@
     }
   },
   "rules": {
+    "global-require": "off",
     "import/extensions": [
       "error",
       "always",
@@ -23,8 +24,11 @@
         "ts": "never"
       }
     ],
-    "global-require": "off",
-    "max-len": 0,
+    "linebreak-style": 0,
+    "max-len": ["error", { "code": 100, "tabWidth": 2 }],
+    "no-param-reassign": 0,
+    "no-plusplus": 0,
+    "no-underscore-dangle": 0,
     "prettier/prettier": [
       "error",
       {
@@ -32,12 +36,9 @@
         "trailingComma": "all",
         "printWidth": 100,
         "tabWidth": 2,
-        "useTabs": false
+        "useTabs": true,
+        "arrowParens": "avoid"
       }
-    ],
-    "no-underscore-dangle": 0,
-    "no-param-reassign": 0,
-    "no-plusplus": 0,
-    "linebreak-style": 0
+    ]
   }
 }

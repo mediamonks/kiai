@@ -14,6 +14,14 @@ export default class Dialogflow extends Platform {
 
   public readonly INTENT_DELIMITER: string = '_';
 
+  public readonly SYSTEM_INTENT_NAMES: {
+    PERMISSION: 'kiai_permission',
+    LOGIN: 'kiai_login',
+    CONFIRMATION: 'kiai_confirmation',
+    TRANSFER: 'kiai_transfer',
+    NOTIFICATION: 'kiai_notification'
+  };
+
   public constructor({
     config,
     clientId = '',
@@ -36,7 +44,7 @@ export default class Dialogflow extends Platform {
 
     this.registerFlows(config.flows);
 
-    this.registerConfirmationIntents('yes', 'no');
+    this.registerConfirmationIntents();
 
     this.registerPermissionIntents();
 

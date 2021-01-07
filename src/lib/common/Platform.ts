@@ -10,9 +10,17 @@ export default abstract class Platform {
 
   public abstract readonly requestHandler: () => any;
 
+  public abstract readonly SYSTEM_INTENT_NAMES: {
+    PERMISSION: string;
+    LOGIN: string;
+    CONFIRMATION: string;
+    TRANSFER: string;
+    NOTIFICATION: string;
+  };
+
   private readonly config: TAppConfig;
 
-  private readonly _profiler: IProfiler = { start: noop, end: noop};
+  private readonly _profiler: IProfiler = { start: noop, end: noop };
 
   protected constructor({ config }: { config: TAppConfig }) {
     this.config = config;
@@ -46,27 +54,36 @@ export default abstract class Platform {
 
   protected registerConfirmationIntents(...options: string[]): void {
     options.forEach(option => {
-      this.registerIntent(`kiai_confirmation_${option}`, conversation => {
-        conversation.handleConfirmation(option);
-      });
+      this.registerIntent(
+        [this.SYSTEM_INTENT_NAMES.CONFIRMATION, option].join(this.INTENT_DELIMITER),
+        conversation => {
+          conversation.handleConfirmation(option);
+        },
+      );
     });
   }
 
   protected registerPermissionIntents(): void {
-    this.registerIntent('kiai_permission_confirmation', conversation => {
+    this.registerIntent(this.SYSTEM_INTENT_NAMES.PERMISSION, conversation => {
       conversation.handlePermission(!!conversation.input[0]);
     });
   }
 
   protected registerLoginIntent(): void {
-    this.registerIntent('kiai_login', conversation => {
+    this.registerIntent(this.SYSTEM_INTENT_NAMES.LOGIN, conversation => {
       conversation.handleLogin(conversation.input[0].status === 'OK');
     });
   }
 
   protected registerTransferIntent(): void {
-    this.registerIntent('kiai_transfer', conversation => {
+    this.registerIntent(this.SYSTEM_INTENT_NAMES.TRANSFER, conversation => {
       conversation.handleTransfer();
+    });
+  }
+
+  protected registerUpdateIntent(): void {
+    this.registerIntent(this.SYSTEM_INTENT_NAMES.NOTIFICATION, conversation => {
+      conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
     });
   }
 
@@ -74,12 +91,6 @@ export default abstract class Platform {
     Object.keys(flows).forEach(flowName => {
       const intents = flows[flowName];
       this.registerIntents(flowName, intents);
-    });
-  }
-
-  protected registerUpdateIntent(): void {
-    this.registerIntent('kiai_notification_confirmation', conversation => {
-      conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
     });
   }
 

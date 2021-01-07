@@ -33,6 +33,11 @@ export default abstract class Conversation {
 
   public abstract readonly TEXT_BUBBLE_LIMIT: Number;
 
+  public abstract readonly CONTEXTS: {
+    CONFIRMATION: string;
+    PERMISSION: string;
+  };
+
   public abstract readonly sessionData: TKeyValue;
 
   public abstract readonly userData: TKeyValue;
@@ -482,7 +487,7 @@ export default abstract class Conversation {
 
     this.confirmationCallbacks = options;
 
-    return this.suggest(...confirmationOptions).expect('confirmation');
+    return this.suggest(...confirmationOptions).expect(this.CONTEXTS.CONFIRMATION);
   }
 
   public track(event: string, data?: TKeyValue): Conversation {

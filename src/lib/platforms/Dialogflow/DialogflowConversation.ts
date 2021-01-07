@@ -38,6 +38,11 @@ export default class DialogflowConversation extends Conversation {
 
   public readonly TEXT_BUBBLE_LIMIT: Number = 2;
 
+  public readonly CONTEXTS = {
+    CONFIRMATION: 'kiai_confirmation',
+    PERMISSION: 'kiai_permission',
+  };
+
   private conversationObject: GoogleDialogflowConversation;
 
   private responses: any[] = [];
@@ -186,7 +191,7 @@ export default class DialogflowConversation extends Conversation {
         permissions: permissions as GoogleActionsV2PermissionValueSpecPermissions[],
         extra,
       }),
-    ).expect('permission_confirmation');
+    ).expect(this.CONTEXTS.PERMISSION);
   }
 
   public requestNotificationPermission(

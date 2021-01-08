@@ -44,7 +44,7 @@ export default class Dialogflow extends Platform {
 
     this.registerFlows(config.flows);
 
-    this.registerConfirmationIntents();
+    this.registerConfirmationIntents('yes', 'no');
 
     this.registerPermissionIntent();
 

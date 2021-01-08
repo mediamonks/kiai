@@ -17,7 +17,7 @@ import {
   BrowseCarousel,
   BrowseCarouselItem,
   BrowseCarouselItemOptions,
-  ImageOptions,
+  ImageOptions, GoogleActionsV2UiElementsBasicCardImageDisplayOptions,
 } from 'actions-on-google';
 import { sample, range, without } from 'lodash';
 import Conversation from '../../common/Conversation';
@@ -231,12 +231,14 @@ export default class DialogflowConversation extends Conversation {
     text,
     image,
     buttons = [],
+    display,
   }: {
     title?: string;
     subtitle?: string;
     text?: string;
     image?: string;
     buttons?: { url: string; title: string }[];
+    display?: GoogleActionsV2UiElementsBasicCardImageDisplayOptions;
   }): Conversation {
     let imageUrl = image && this.getImageUrl(image);
 
@@ -247,6 +249,7 @@ export default class DialogflowConversation extends Conversation {
         text,
         image: imageUrl && new Image({ url: imageUrl, alt: image }),
         buttons: buttons.map(button => new Button(button)),
+        display
       }),
     );
   }
@@ -276,6 +279,7 @@ export default class DialogflowConversation extends Conversation {
 
   public carousel({
     items,
+    display,
   }: {
     items: {
       title?: string;
@@ -286,6 +290,7 @@ export default class DialogflowConversation extends Conversation {
       footer?: string;
       key?: string;
     }[];
+    display?: GoogleActionsV2UiElementsBasicCardImageDisplayOptions;
   }): Conversation {
     const isBrowse = !!items.find(item => !!item.url);
 
@@ -296,6 +301,9 @@ export default class DialogflowConversation extends Conversation {
 
     if (items.length < 2 || items.length > 10)
       throw new Error('Carousel requires a minimum of 2 and a maximum of 10 items');
+    
+    if (isBrowse && display)
+      throw new Error('Carousel "display" option is ignored for a BrowseCarousel');
 
     const listItems = hasKeys ? {} : [];
 
@@ -328,7 +336,7 @@ export default class DialogflowConversation extends Conversation {
     });
 
     if (isBrowse) {
-      return this.add(new BrowseCarousel({ items: listItems as BrowseCarouselItem[] }));
+      return this.add(new BrowseCarousel({ items: listItems as BrowseCarouselItem[], display }));
     } else {
       return this.add(new Carousel({ items: listItems }));
     }

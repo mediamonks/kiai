@@ -43,7 +43,7 @@ export default class Tracker {
         ea: event,
         el: data.label || '',
         ev: data.value,
-      });
+      }).send();
     }
   }
 }

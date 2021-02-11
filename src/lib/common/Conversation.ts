@@ -141,6 +141,14 @@ export default abstract class Conversation {
   public set version(version: string) {
     this.sessionData.__version = version;
   }
+  
+  public get lastActivity(): number {
+    return <number>this.userData.__lastActivity;
+  }
+  
+  public set lastActivity(timestamp: number) {
+    this.userData.__lastActivity = timestamp;
+  }
 
   protected set context(context: string) {
     this.sessionData.__context = context;
@@ -218,7 +226,7 @@ export default abstract class Conversation {
   protected set updateRegistrationCallback(callbackIntent: string) {
     this.sessionData.__updateRegistrationCallback = this.resolveIntent(callbackIntent);
   }
-
+  
   private set confirmationCallbacks(options: TMapping) {
     this.sessionData.__confirmation = options;
   }
@@ -546,7 +554,7 @@ export default abstract class Conversation {
     return this.next(this.loginCallback, wasSuccessful);
   }
 
-  public handleTransfer(): Conversation {
+  public handleTransfer(confirmed: boolean): Conversation {
     return this.next(this.transferCallback);
   }
 

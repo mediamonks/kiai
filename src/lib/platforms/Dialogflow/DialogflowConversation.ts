@@ -142,7 +142,7 @@ export default class DialogflowConversation extends Conversation {
     description: string,
     callbackIntent?: string,
   ): Conversation {
-    this.transferCallback = callbackIntent;
+    this.transferCallback = this.resolveIntent(callbackIntent);
 
     return this.add(
       new NewSurface({

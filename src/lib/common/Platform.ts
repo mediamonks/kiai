@@ -77,7 +77,7 @@ export default abstract class Platform {
 
   protected registerTransferIntent(): void {
     this.registerIntent(this.SYSTEM_INTENT_NAMES.TRANSFER, conversation => {
-      conversation.handleTransfer();
+      conversation.handleTransfer(conversation.input[0].status === 'OK');
     });
   }
 

@@ -83,7 +83,7 @@ export default class Dialogflow extends Platform {
       this.conversation.location = conversation.device.location;
       this.conversation.noInput = !!conversation.arguments.get('REPROMPT_COUNT');
       this.conversation.lastActivity = Date.now();
-      this.conversation.track('intent', { category: 'interaction', label: intent });
+      this.conversation.track(intent);
       delete this.conversation.scene;
 
       const [flowName, intentName] = intent.displayName.split(this.INTENT_DELIMITER);

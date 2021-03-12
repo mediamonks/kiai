@@ -57,13 +57,14 @@ export type TAppConfig = {
   flows: TFlows;
   locales: TLocales;
   localeMapping: TMapping;
-  dialog: TDialogText;
-  voice: TVoiceIndex;
-  tracking: TTrackingConfig;
-  storage: TStorageConfig;
+  dialog?: TDialogText;
+  voice?: TVoiceIndex;
+  tracking?: TTrackingConfig;
+  storage?: TStorageConfig;
   viewUrl?: string;
   disableSsml?: boolean;
   enableProfiling?: boolean;
+  region?: string;
 };
 
 export type TSpeech = { key: string; params?: TMapping | string[] };

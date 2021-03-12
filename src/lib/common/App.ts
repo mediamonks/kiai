@@ -31,6 +31,7 @@ export default class App {
     voice: {},
     tracking: {},
     storage: {},
+    region: 'us-central1',
   };
 
   private _platforms: Platform[] = [];

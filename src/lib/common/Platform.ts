@@ -18,8 +18,8 @@ export default abstract class Platform {
     NOTIFICATION: string;
   };
 
-  private readonly config: TAppConfig;
-
+  protected readonly config: TAppConfig;
+  
   private readonly _profiler: IProfiler = { start: noop, end: noop };
 
   protected constructor({ config }: { config: TAppConfig }) {

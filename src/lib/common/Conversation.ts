@@ -78,7 +78,7 @@ export default abstract class Conversation {
 
   private static DEFAULT_EXTENSION: TMapping = {
     sfx: 'mp3',
-    image: 'png',
+    images: 'png',
     voice: 'wav',
   };
 

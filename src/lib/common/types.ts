@@ -65,6 +65,7 @@ export type TAppConfig = {
   disableSsml?: boolean;
   enableProfiling?: boolean;
   region?: string;
+  disableDefaultTracking?: boolean;
 };
 
 export type TSpeech = { key: string; params?: TMapping | string[] };

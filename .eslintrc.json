@@ -6,8 +6,13 @@
   "env": {
     "browser": false
   },
-  "extends": ["airbnb-base", "prettier"],
-  "plugins": ["import", "prettier"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:import"
+  ],
   "settings": {
     "import/resolver": {
       "node": true,
@@ -30,15 +35,7 @@
     "no-plusplus": 0,
     "no-underscore-dangle": 0,
     "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "trailingComma": "all",
-        "printWidth": 100,
-        "tabWidth": 2,
-        "useTabs": true,
-        "arrowParens": "avoid"
-      }
+      "error"
     ]
   }
 }

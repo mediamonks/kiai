@@ -1,8 +1,7 @@
+import * as functions from 'firebase-functions';
 import { TRequestHandler } from '../common/types';
 import IFramework from '../common/IFramework';
 import App from '../common/App';
-
-const functions = require('firebase-functions');
 
 let _app: App;
 

@@ -357,7 +357,8 @@ export default abstract class Conversation {
 		let msgSrc = get(this.locales[this.locale], path);
 
 		if (!msgSrc) {
-			// if it contains anything other than lowercase letters, digits and underscores, it's probably not a key, so we don't show a warning
+			// if it contains anything other than lowercase letters, digits and underscores,
+			// it's probably not a key, so we don't show a warning
 			if (path.match(/^[\w\d]+$/))
 				console.warn(`Translation not defined for language "${this.locale}", path "${path}"`);
 			return path;
@@ -530,14 +531,14 @@ export default abstract class Conversation {
 		return new Promise(resolve => {
 			const executeHandler = (): void => {
 				if (!this.intentHandlers.length) {
-					resolve();
+					resolve(this);
 				} else {
 					const { handler, payload } = this.intentHandlers.shift();
 					Promise.resolve(handler(this, payload))
 						.then(() => executeHandler())
 						.catch(error => {
 							this.handleError(error);
-							resolve();
+							resolve(this);
 						});
 				}
 			};
@@ -593,8 +594,8 @@ export default abstract class Conversation {
 		let extension = pathLib.extname(asset);
 
 		if (extension) {
-			extension = extension.substring(1);
 			name = pathLib.basename(asset, extension);
+			extension = extension.substring(1);
 		} else {
 			extension = get(
 				this.config.storage,

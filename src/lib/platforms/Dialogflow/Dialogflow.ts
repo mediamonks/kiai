@@ -3,6 +3,7 @@ import DialogflowConversation from './DialogflowConversation';
 import Platform from '../../common/Platform';
 import { TAppConfig, TIntentHandler, TKeyValue } from '../../common/types';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const VERSION = require('../../../../package.json').version;
 
 export default class Dialogflow extends Platform {
@@ -70,9 +71,12 @@ export default class Dialogflow extends Platform {
 			this.profiler.start(`Dialogflow init conversation`);
 
 			// TODO: test this code
-			// if (!Object.keys(conversation.contexts.input).length) {
-			//   console.warn('No input contexts found. Possibly deleted by Dialogflow. Please check the output context field of the last intent triggered.');
-			// }
+			if (!Object.keys(conversation.contexts.input).length) {
+				console.warn(
+					'No input contexts found. Possibly deleted by Dialogflow. ' +
+						'Please check the output context field of the last intent triggered.',
+				);
+			}
 
 			this.conversation.setConversationObject(conversation);
 			this.conversation.version = VERSION;

@@ -1,4 +1,4 @@
-const { performance } = require('perf_hooks');
+import { performance } from 'perf_hooks';
 
 export default class Profiler {
 	private labels: { [key: string]: number } = {};

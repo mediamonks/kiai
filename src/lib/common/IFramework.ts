@@ -10,4 +10,4 @@ export interface IFrameworkConstructor {
 	new (app: App, options: TConfig): IFramework;
 }
 
-declare var IFramework: IFrameworkConstructor;
+declare const IFramework: IFrameworkConstructor;

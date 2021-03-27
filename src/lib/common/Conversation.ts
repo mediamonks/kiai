@@ -1,4 +1,4 @@
-import pathLib from 'path';
+import * as pathLib from 'path';
 import { get, isArray, sample } from 'lodash';
 import * as MessageFormat from 'messageformat';
 import * as uniqid from 'uniqid';
@@ -594,7 +594,7 @@ export default abstract class Conversation {
 
 		if (extension) {
 			extension = extension.substring(1);
-			name = path.basename(asset, extension);
+			name = pathLib.basename(asset, extension);
 		} else {
 			extension = get(
 				this.config.storage,

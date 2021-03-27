@@ -10,10 +10,9 @@
     "build:ts": "tsc",
     "prepare": "npm run build",
     "test": "echo 'Coming soon!'",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix src/**"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.19.0",
     "actions-on-google": "^2.13.0",
     "amplitude": "^5.1.3",
     "body-parser": "^1.18.3",
@@ -27,6 +26,8 @@
   },
   "devDependencies": {
     "@firebase/app-types": "^0.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
     "eslint": "^7.22.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^8.1.0",

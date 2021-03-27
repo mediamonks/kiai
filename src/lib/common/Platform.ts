@@ -4,103 +4,103 @@ import Profiler from './Profiler';
 import IProfiler from './IProfiler';
 
 export default abstract class Platform {
-  public abstract readonly IDENTIFIER: string;
+	public abstract readonly IDENTIFIER: string;
 
-  public abstract readonly INTENT_DELIMITER: string;
+	public abstract readonly INTENT_DELIMITER: string;
 
-  public abstract readonly requestHandler: () => any;
+	public abstract readonly requestHandler: () => any;
 
-  public abstract readonly SYSTEM_INTENT_NAMES: {
-    PERMISSION: string;
-    LOGIN: string;
-    CONFIRMATION: string;
-    TRANSFER: string;
-    NOTIFICATION: string;
-  };
+	public abstract readonly SYSTEM_INTENT_NAMES: {
+		PERMISSION: string;
+		LOGIN: string;
+		CONFIRMATION: string;
+		TRANSFER: string;
+		NOTIFICATION: string;
+	};
 
-  protected readonly config: TAppConfig;
-  
-  private readonly _profiler: IProfiler = { start: noop, end: noop };
+	protected readonly config: TAppConfig;
 
-  protected constructor({ config }: { config: TAppConfig }) {
-    this.config = config;
+	private readonly _profiler: IProfiler = { start: noop, end: noop };
 
-    if (config.enableProfiling) this._profiler = new Profiler();
-  }
+	protected constructor({ config }: { config: TAppConfig }) {
+		this.config = config;
 
-  protected get profiler(): IProfiler {
-    return this._profiler;
-  }
+		if (config.enableProfiling) this._profiler = new Profiler();
+	}
 
-  private get localeMapping(): TMapping {
-    return this.config.localeMapping;
-  }
+	protected get profiler(): IProfiler {
+		return this._profiler;
+	}
 
-  protected abstract registerIntent(key: string, handler: TIntentHandler): void;
+	private get localeMapping(): TMapping {
+		return this.config.localeMapping;
+	}
 
-  protected registerIntents(flowName: string, intents: TFlow) {
-    Object.keys(intents).forEach(intentKey => {
-      const intentHandler = intents[intentKey];
+	protected abstract registerIntent(key: string, handler: TIntentHandler): void;
 
-      if (typeof intentHandler === 'object') {
-        return this.registerIntents(flowName, intentHandler);
-      }
+	protected registerIntents(flowName: string, intents: TFlow) {
+		Object.keys(intents).forEach(intentKey => {
+			const intentHandler = intents[intentKey];
 
-      if (typeof intentHandler === 'function') {
-        this.registerIntent(`${flowName}${this.INTENT_DELIMITER}${intentKey}`, intentHandler);
-      }
-    });
-  }
+			if (typeof intentHandler === 'object') {
+				return this.registerIntents(flowName, intentHandler);
+			}
 
-  protected registerConfirmationIntents(...options: string[]): void {
-    options.forEach(option => {
-      this.registerIntent(
-        [this.SYSTEM_INTENT_NAMES.CONFIRMATION, option].join(this.INTENT_DELIMITER),
-        conversation => {
-          conversation.handleConfirmation(option);
-        },
-      );
-    });
-  }
+			if (typeof intentHandler === 'function') {
+				this.registerIntent(`${flowName}${this.INTENT_DELIMITER}${intentKey}`, intentHandler);
+			}
+		});
+	}
 
-  protected registerPermissionIntent(): void {
-    this.registerIntent(this.SYSTEM_INTENT_NAMES.PERMISSION, conversation => {
-      conversation.handlePermission(!!conversation.input[0]);
-    });
-  }
+	protected registerConfirmationIntents(...options: string[]): void {
+		options.forEach(option => {
+			this.registerIntent(
+				[this.SYSTEM_INTENT_NAMES.CONFIRMATION, option].join(this.INTENT_DELIMITER),
+				conversation => {
+					conversation.handleConfirmation(option);
+				},
+			);
+		});
+	}
 
-  protected registerLoginIntent(): void {
-    this.registerIntent(this.SYSTEM_INTENT_NAMES.LOGIN, conversation => {
-      conversation.handleLogin(conversation.input[0].status === 'OK');
-    });
-  }
+	protected registerPermissionIntent(): void {
+		this.registerIntent(this.SYSTEM_INTENT_NAMES.PERMISSION, conversation => {
+			conversation.handlePermission(!!conversation.input[0]);
+		});
+	}
 
-  protected registerTransferIntent(): void {
-    this.registerIntent(this.SYSTEM_INTENT_NAMES.TRANSFER, conversation => {
-      conversation.handleTransfer(conversation.input[0].status === 'OK');
-    });
-  }
+	protected registerLoginIntent(): void {
+		this.registerIntent(this.SYSTEM_INTENT_NAMES.LOGIN, conversation => {
+			conversation.handleLogin(conversation.input[0].status === 'OK');
+		});
+	}
 
-  protected registerUpdateIntent(): void {
-    this.registerIntent(this.SYSTEM_INTENT_NAMES.NOTIFICATION, conversation => {
-      conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
-    });
-  }
+	protected registerTransferIntent(): void {
+		this.registerIntent(this.SYSTEM_INTENT_NAMES.TRANSFER, conversation => {
+			conversation.handleTransfer(conversation.input[0].status === 'OK');
+		});
+	}
 
-  protected registerFlows(flows: TFlows): void {
-    Object.keys(flows).forEach(flowName => {
-      const intents = flows[flowName];
-      this.registerIntents(flowName, intents);
-    });
-  }
+	protected registerUpdateIntent(): void {
+		this.registerIntent(this.SYSTEM_INTENT_NAMES.NOTIFICATION, conversation => {
+			conversation.handleUpdateRegistration(conversation.input[0].status === 'OK');
+		});
+	}
 
-  protected mapLocale(locale: string): string {
-    Object.keys(this.localeMapping).find(key => {
-      const match = new RegExp(key).test(locale);
-      if (match) locale = this.localeMapping[key];
-      return match;
-    });
+	protected registerFlows(flows: TFlows): void {
+		Object.keys(flows).forEach(flowName => {
+			const intents = flows[flowName];
+			this.registerIntents(flowName, intents);
+		});
+	}
 
-    return locale;
-  }
+	protected mapLocale(locale: string): string {
+		Object.keys(this.localeMapping).find(key => {
+			const match = new RegExp(key).test(locale);
+			if (match) locale = this.localeMapping[key];
+			return match;
+		});
+
+		return locale;
+	}
 }

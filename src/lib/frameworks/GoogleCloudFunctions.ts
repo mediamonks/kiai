@@ -3,13 +3,15 @@ import App from '../common/App';
 import { TRequestHandler } from '../common/types';
 
 export default class GoogleCloudFunctions implements IFramework {
+	public endpoints: { [key: string]: TRequestHandler } = {};
+
 	public constructor(app: App) {
 		app.platforms.forEach(platform => {
-			this[platform.IDENTIFIER] = platform.requestHandler;
+			this.endpoints[platform.IDENTIFIER] = platform.requestHandler;
 		});
 	}
 
 	public use(name: string, handler: TRequestHandler): void {
-		this[name] = handler;
+		this.endpoints[name] = handler;
 	}
 }

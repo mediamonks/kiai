@@ -27,16 +27,22 @@ export default class Dialogflow extends Platform {
 		config,
 		clientId = '',
 		debug = false,
+		authenticationKey,
 	}: {
 		config: TAppConfig;
-		clientId: string;
-		debug: boolean;
+		clientId?: string;
+		debug?: boolean;
+		authenticationKey?: string;
 	}) {
 		super({ config });
 
 		this.profiler.start('Dialogflow init library');
 
-		this.dialogflow = dialogflow({ clientId, debug });
+		const verification = authenticationKey && {
+			Authentication: `Bearer ${authenticationKey}`,
+		};
+
+		this.dialogflow = dialogflow({ clientId, debug, verification });
 
 		this.conversation = new DialogflowConversation({ config, platform: this });
 

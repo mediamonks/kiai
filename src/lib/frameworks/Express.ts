@@ -7,7 +7,7 @@ import * as bodyParser from 'body-parser';
 export default class Express implements IFramework {
 	private express: express.Express;
 
-	public endpoints = [];
+	public endpoints: { [key: string]: TRequestHandler } = {};
 
 	public constructor(
 		app: App,
@@ -22,13 +22,13 @@ export default class Express implements IFramework {
 		app.platforms.forEach(platform => {
 			const endpoint = `/${platform.IDENTIFIER}`;
 			this.express.post(endpoint, platform.requestHandler);
-			this.endpoints.push(endpoint);
+			this.endpoints[endpoint] = platform.requestHandler;
 		});
 
 		try {
 			this.express.listen(port, () => {
 				console.log('Server started.\nLocal endpoints:');
-				this.endpoints.forEach(endpoint => {
+				Object.keys(this.endpoints).forEach(endpoint => {
 					console.log(`${url}${endpoint}`);
 				});
 			});
@@ -40,6 +40,6 @@ export default class Express implements IFramework {
 	public use(name: string, handler: TRequestHandler): void {
 		const endpoint = `/${name}`;
 		this.express.all(endpoint, handler);
-		this.endpoints.push(endpoint);
+		this.endpoints[endpoint] = handler;
 	}
 }

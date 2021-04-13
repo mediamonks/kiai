@@ -3,7 +3,7 @@ import { TConfig, TRequestHandler } from './types';
 
 export default interface IFramework {
 	use(name: string, handler: TRequestHandler): void;
-	endpoints?: string[];
+	endpoints: { [key: string]: TRequestHandler };
 }
 
 export interface IFrameworkConstructor {

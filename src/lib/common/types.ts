@@ -1,16 +1,12 @@
 import Conversation from './Conversation';
 import Platform from './Platform';
 
+export type TPrimitive = string | number | boolean;
+
+export type TPrimitiveArray = string[] | number[] | boolean[];
+
 export type TKeyValue = {
-	[key: string]:
-		| string
-		| string[]
-		| number
-		| number[]
-		| TKeyValue
-		| TKeyValue[]
-		| boolean
-		| boolean[];
+	[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
 };
 
 export type TMapping = { [key: string]: string };
@@ -76,7 +72,7 @@ export type TAppConfig = {
 	disableDefaultTracking?: boolean;
 };
 
-export type TSpeech = { key: string; params?: TMapping | string[] };
+export type TSpeech = { key: string; params?: TMapping };
 
 export type THistoryItem = { flow: string; intent: string; user: boolean };
 

@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { TKeyValue, TTrackingConfig } from './types';
+import { TKeyValue, TPrimitive, TPrimitiveArray, TTrackingConfig } from './types';
 import Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
@@ -22,8 +22,21 @@ export default class Tracker {
 	}: {
 		userId: string;
 		event: string;
-		data?: TKeyValue;
-		userData?: TKeyValue;
+		data?: {
+			category?: string;
+			label?: string;
+			value?: number;
+			[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
+		};
+		userData?: {
+			category?: string;
+			label?: string;
+			value?: number;
+			device?: {
+				locale?: string;
+			};
+			[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
+		};
 	}): void {
 		if (this.amplitude) {
 			this.amplitude.track({
@@ -41,11 +54,11 @@ export default class Tracker {
 			userData = userData || {};
 
 			ga.event({
-				ec: data.category || userData.category || '[unspecified]',
+				ec: (data.category || userData.category || '[unspecified]') as string,
 				ea: event,
-				el: data.label || userData.label || '',
-				ev: data.value || userData.value,
-				ul: userData.device['locale'],
+				el: (data.label || userData.label || '') as string,
+				ev: (data.value || userData.value) as number,
+				ul: userData.device['locale'] as string,
 			}).send();
 		}
 	}

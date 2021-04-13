@@ -13,6 +13,8 @@ import {
 	TLinkOutType,
 	TLocales,
 	TMapping,
+	TPrimitive,
+	TPrimitiveArray,
 	TSpeech,
 	TTrackingDataCollector,
 } from './types';
@@ -241,7 +243,7 @@ export default abstract class Conversation {
 		return <string[]>this.sessionData.__callbacks;
 	}
 
-	private get dialog(): TKeyValue {
+	private get dialog(): TMapping {
 		return this.config.dialog[this.locale] || {};
 	}
 
@@ -372,7 +374,7 @@ export default abstract class Conversation {
 		return msg({ ...params });
 	}
 
-	public say(key: string, params?: TMapping | string[]): Conversation {
+	public say(key: string, params?: TMapping): Conversation {
 		key = String(key);
 
 		this.lastSpeech = { key, params };
@@ -380,12 +382,12 @@ export default abstract class Conversation {
 		const regex = new RegExp(`^${key.replace('*', '\\d+')}$`);
 		let dialogVariants = Object.keys(this.dialog).filter(key => regex.test(key));
 
-		let speech;
+		let speech: string;
 		let voices;
 		if (!dialogVariants.length) {
 			speech = key;
 		} else {
-			let dialogVariant;
+			let dialogVariant: string;
 			if (dialogVariants.length === 1) {
 				dialogVariant = dialogVariants[0];
 			} else {
@@ -413,21 +415,24 @@ export default abstract class Conversation {
 			return this.speak(sample(voices), speech);
 		}
 
-		speech = speech.split('\b');
-		if (speech.length > this.TEXT_BUBBLE_LIMIT) {
+		const messages = speech.split('\b');
+		if (messages.length > this.TEXT_BUBBLE_LIMIT) {
 			throw new Error(
 				`More than ${this.TEXT_BUBBLE_LIMIT} text bubbles are currently not supported.`,
 			);
 		}
 
-		while (speech.length > 1) {
-			this.add(speech.shift()).respond();
+		while (messages.length > 1) {
+			this.add(messages.shift()).respond();
 		}
 
-		return this.add(speech.pop());
+		return this.add(messages.pop());
 	}
 
-	public next(intent: string, payload?: any): Conversation {
+	public next(
+		intent: string,
+		payload?: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[],
+	): Conversation {
 		intent = this.resolveIntent(intent);
 
 		const [flowName, intentName] = intent.split(App.INTENT_DELIMITER);

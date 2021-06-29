@@ -49,7 +49,7 @@ export default class Tracker {
 		}
 
 		if (this.gaTrackingId) {
-			const ga = ua(this.gaTrackingId, { uid: userId });
+			const ga = ua(this.gaTrackingId, userId, { strictCidFormat: false });
 
 			userData = userData || {};
 

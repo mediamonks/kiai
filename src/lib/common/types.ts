@@ -3,10 +3,8 @@ import Platform from './Platform';
 
 export type TPrimitive = string | number | boolean;
 
-export type TPrimitiveArray = string[] | number[] | boolean[];
-
 export type TKeyValue = {
-	[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
+	[key: string]: TPrimitive | TPrimitive[] | TKeyValue | TKeyValue[];
 };
 
 export type TMapping = { [key: string]: string };

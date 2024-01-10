@@ -14,7 +14,6 @@ import {
 	TLocales,
 	TMapping,
 	TPrimitive,
-	TPrimitiveArray,
 	TSpeech,
 	TTrackingDataCollector,
 } from './types';
@@ -431,7 +430,7 @@ export default abstract class Conversation {
 
 	public next(
 		intent: string,
-		payload?: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[],
+		payload?: TPrimitive | TPrimitive[] | TKeyValue | TKeyValue[],
 	): Conversation {
 		intent = this.resolveIntent(intent);
 

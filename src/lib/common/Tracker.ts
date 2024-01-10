@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { TKeyValue, TPrimitive, TPrimitiveArray, TTrackingConfig } from './types';
+import { TKeyValue, TPrimitive, TTrackingConfig } from './types';
 import Amplitude from 'amplitude';
 import * as ua from 'universal-analytics';
 
@@ -26,7 +26,7 @@ export default class Tracker {
 			category?: string;
 			label?: string;
 			value?: number;
-			[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
+			[key: string]: TPrimitive | TPrimitive[] | TKeyValue | TKeyValue[];
 		};
 		userData?: {
 			category?: string;
@@ -35,7 +35,7 @@ export default class Tracker {
 			device?: {
 				locale?: string;
 			};
-			[key: string]: TPrimitive | TPrimitiveArray | TKeyValue | TKeyValue[];
+			[key: string]: TPrimitive | TPrimitive[] | TKeyValue | TKeyValue[];
 		};
 	}): void {
 		if (this.amplitude) {
